@@ -1,0 +1,103 @@
+{
+  "request_description": "Selecting cards",
+  "send_in_request": {
+    "cookies": [
+      {
+        "cookie_1_key": "cookie_1_name"
+      }
+    ],
+    "headers": [
+      {
+        "header_1_key": "header_1_name"
+      }
+    ],
+    "goto":
+      {
+        "url": "https://cortestudios-portfolio.netlify.app/#contact",
+        "options": {
+          "waitUntil": "networkidle0"
+        },
+        "instructions": [
+          {
+            "command": "type",
+            "params": [
+              "#name",
+              "Jose Ernesto bot"
+            ],
+            "options": {
+              "delay": 30
+            }
+          },
+          {
+            "command": "type",
+            "params": [
+              "#email",
+              "josebot@gmail.com"
+            ],
+            "options": {
+              "delay": 30
+            }
+          },
+          {
+            "command": "type",
+            "params": [
+              "#message",
+              "I am texting from bot"
+            ],
+            "options": {
+              "delay": 30
+            }
+          },
+          {
+            "command": "click",
+            "params": [
+              "#send"
+            ],
+            "options": {}
+          },
+          {
+            "command": "wait_for_timeout",
+            "params": [
+              4000
+            ],
+            "options": {}
+          },
+          {
+            "command": "wait_for_selector",
+            "params": [
+              ".alert-info"
+            ],
+            "options": {}
+          },
+          {
+            "command": "evaluate",
+            "params": [
+              "console.log(document.getElementsByClassName('alert-info')[0].innerHTML)"
+            ],
+            "options": {}
+          }
+        ]
+      }
+  },
+  "get_in_response": {
+    "cookies": true,
+    "headers": true,
+    "screenshot": {
+      "active": true,
+      "full_page": true
+    },
+    "logs": true,
+    "return_page_source": true,
+    "extract_rules": {
+      "profile_name": "h1.profile-user",
+      "amount_invoice": "span#amount"
+    }
+  },
+  "request_config": {
+    "block_resources": true,
+    "window_height": "1080",
+    "window_width": "1080",
+    "custom_proxy": "url"
+  }
+}
+

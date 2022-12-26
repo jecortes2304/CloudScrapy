@@ -1,0 +1,30 @@
+{
+  "config1": {
+    "headless": false,
+    "defaultViewport": null,
+    "args": [
+      "--start-maximized",
+      "--no-sandbox",
+      "--disable-gpu",
+      "--incognito",
+      "--disable-dev-shm-usage",
+      "--disable-setuid-sandbox",
+      "--no-first-run",
+      "--no-zygote",
+      "--single-process",
+      "--window-size=1920,1080",
+      "--disable-dev-shm-usage",
+      "--disable-extensions",
+      "--disable-dev-tools",
+      "--ignore-certificate-errors",
+      "--enable-logging",
+      "--v=1",
+      "--disable-setuid-sandbox",
+      "--disable-infobars",
+      "--window-position=0,0",
+      "--ignore-certifcate-errors",
+      "--ignore-certifcate-errors-spki-list",
+      "--user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Safari/537.36"
+    ]
+  }
+}

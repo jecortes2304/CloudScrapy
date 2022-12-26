@@ -1,0 +1,115 @@
+{
+  "page_name": "Dashboard",
+  "request_description": "Selecting cards",
+  "send_in_request": {
+    "cookies": [
+      {
+        "cookie_1_key": "cookie_1_name"
+      }
+    ],
+    "headers": [
+      {
+        "header_1_key": "header_1_name"
+      }
+    ],
+    "goto": {
+      "url": "https://business.facebook.com/",
+      "options": {
+        "waitUntil": "networkidle0"
+      },
+      "instructions": [
+        {
+          "command": "evaluate",
+          "params": [
+            "document.getElementsByClassName('_9xo5')[0].getElementsByTagName('button')[0].click()"
+          ],
+          "options": {}
+        },
+        {
+          "command": "evaluate",
+          "params": [
+            "document.getElementsByClassName('_42ft _inf _9c1q _9ltl _9g1j _9f5z _2qix _3bn- _9g0w _w1i _inf _9c1q _9ltl _9f5z _9g1j _98hv _inf _9c1q _9ltl _9f5z _9g1j')[0].click()"
+          ],
+          "options": {}
+        },
+        {
+          "command": "wait_for_navigation",
+          "params": [],
+          "options": {
+            "waitUntil": "networkidle0"
+          }
+        },
+        {
+          "command": "evaluate",
+          "params": [
+            "document.getElementsByClassName('xeuugli x2lwn1j x6s0dn4 x78zum5 x1q0g3np x1iyjqo2 xozqiw3 x19lwn94 x1hc1fzr x13dflua x6o7n8i xxziih7 x12w9bfk xl56j7k xh8yej3')[0].click()"
+          ],
+          "options": {
+            "delay": 30
+          }
+        },
+        {
+          "command": "wait_for_navigation",
+          "params": [],
+          "options": {
+            "waitUntil": "networkidle0"
+          }
+        },
+        {
+          "command": "type",
+          "params": [
+            "#email",
+            "joseernesto@lucual18.es"
+          ],
+          "options": {
+            "delay": 30
+          }
+        },
+        {
+          "command": "type",
+          "params": [
+            "#pass",
+            "joseernesto.2304*"
+          ],
+          "options": {
+            "delay": 30
+          }
+        },
+        {
+          "command": "click",
+          "params": [
+            "#loginButton"
+          ],
+          "options": {}
+        },
+        {
+          "command": "wait_for_navigation",
+          "params": [],
+          "options": {
+            "waitUntil": "networkidle0"
+          }
+        }
+      ]
+    }
+  },
+  "get_in_response": {
+    "cookies": true,
+    "headers": true,
+    "screenshot": {
+      "active": false,
+      "full_page": true
+    },
+    "logs": true,
+    "return_page_source": true,
+    "extract_rules": {
+      "profile_name": "h1.profile-user",
+      "amount_invoice": "span#amount"
+    }
+  },
+  "request_config": {
+    "block_resources": true,
+    "window_height": "1080",
+    "window_width": "1080",
+    "custom_proxy": "url"
+  }
+}
