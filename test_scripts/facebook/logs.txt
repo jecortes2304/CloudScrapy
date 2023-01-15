@@ -1,0 +1,9 @@
+info---->[CloudScrapy v0.0.1]-[LOGGER]---->10-01-2023-11:01:12---->Selecting login
+info---->[CloudScrapy v0.0.1]-[LOGGER]---->10-01-2023-11:01:52---->Selecting Facebook account for login
+info---->[CloudScrapy v0.0.1]-[LOGGER]---->10-01-2023-11:01:100---->Login with credentials
+Write your code: 058320
+info---->[CloudScrapy v0.0.1]-[LOGGER]---->10-01-2023-11:01:38---->Typing the 2fa code and sending
+info---->[CloudScrapy v0.0.1]-[LOGGER]---->10-01-2023-11:01:44---->Saving browser
+info---->[CloudScrapy v0.0.1]-[LOGGER]---->10-01-2023-11:01:48---->Login Successfully
+info---->[CloudScrapy v0.0.1]-[LOGGER]---->10-01-2023-11:01:48---->Taking picture
+info---->[CloudScrapy v0.0.1]-[LOGGER]---->10-01-2023-11:01:50---->Closing browser

@@ -1,0 +1,93 @@
+{
+  "login_1": {
+    "request_description": "Selecting cards",
+    "send_in_request":  {
+      "url": "https://business.facebook.com/",
+      "options": {
+        "waitUntil": "networkidle0"
+      },
+      "instructions": [
+        {"command": "evaluate", "params": ["document.getElementsByClassName('_9xo5')[0].getElementsByTagName('button')[0].click()"], "options": {}},
+        {"command": "wait_for_selector", "params": ["._42ft"], "options": {}},
+        {"command": "evaluate","params": ["document.getElementsByClassName('_42ft')[0].click()"],"options": {}},
+        {"command": "wait_for_navigation","params": [], "options": {"waitUntil": "networkidle0"}},
+        {"command": "wait_for_selector", "params": ["._42ft"], "options": {}},
+        {"command": "evaluate","params": ["document.getElementsByClassName('xeuugli x2lwn1j x6s0dn4 x78zum5 x1q0g3np x1iyjqo2 xozqiw3 x19lwn94 x1hc1fzr x13dflua x6o7n8i xxziih7 x12w9bfk xl56j7k xh8yej3')[0].click()"], "options": {"delay": 10}},
+        {"command": "wait_for_navigation", "params": [], "options": {"waitUntil": "networkidle0"}},
+        {"command": "type", "params": ["#email", "joseernesto@lucual18.es"],"options": {"delay": 10}},
+        {"command": "type","params": ["#pass","joseernesto.2304*"],"options": {"delay": 10}},
+        {"command": "click","params": ["#loginbutton"],"options": {}},
+        {"command": "wait_for_navigation","params": [],"options": {"waitUntil": "networkidle0"}},
+        {"command": "evaluate_sca","params": ["Autenticación en dos pasos obligatoria"],"options": {}}
+      ]
+    },
+    "get_in_response": {
+      "cookies": true,
+      "headers": true,
+      "logs": false,
+      "screenshot": {
+        "active": true,
+        "full_page": false
+      },
+      "page_source": true,
+      "extract_rules": {}
+    },
+    "request_config": {
+      "block_resources": ["image", "stylesheet", "font", "media"]
+    }
+  },
+  "login_2": {
+    "context_id": "E6C0AA4AEC5EF27E1B3FEE5F2A471EB6",
+    "send_in_request": {
+      "options": {
+        "waitUntil": "networkidle0"
+      },
+      "instructions": [
+        {
+          "command": "type",
+          "params": [
+            "#approvals_code",
+            "893351"
+          ],
+          "options": {
+            "delay": 10
+          }
+        },
+        {
+          "command": "click",
+          "params": [
+            "#checkpointSubmitButton"
+          ],
+          "options": {}
+        },
+        {
+          "command": "wait_for_navigation",
+          "params": [],
+          "options": {
+            "waitUntil": "networkidle0"
+          }
+        },
+        {
+          "command": "click",
+          "params": [
+            "input[name='name_action_selected']"
+          ],
+          "options": {}
+        },
+        {
+          "command": "click",
+          "params": [
+            "#checkpointSubmitButton"
+          ],
+          "options": {}
+        },
+        {
+          "command": "wait_for_navigation",
+          "params": [],
+          "options": {
+            "waitUntil": "networkidle0"
+          }
+        }
+      ]}
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "config_1": {
+    "headless": true,
+    "defaultViewport": null,
+    "ignoreDefaultArgs": [
+      "--enable-automation"
+    ],
+    "args": [
+      "--start-maximized",
+      "--no-sandbox",
+      "--disable-gpu",
+      "--incognito",
+      "--v=1",
+      "--disable-accelerated-2d-canvas",
+      "--no-first-run",
+      "--no-zygote",
+      "--disable-dev-shm-usage",
+      "--disable-extensions",
+      "--disable-dev-tools",
+      "--ignore-certificate-errors"
+    ]
+  }
+}
