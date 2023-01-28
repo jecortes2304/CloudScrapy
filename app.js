@@ -24,7 +24,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/screenshots', express.static('screenshots'));
+app.use('/screenshots', express.static('files/screenshots'));
+app.use('/logs', express.static('files/logs'));
 
 
 // catch 404 and forward to error handler

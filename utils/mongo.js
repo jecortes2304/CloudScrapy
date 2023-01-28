@@ -3,7 +3,8 @@ const logger = require('../utils/logger')("")
 
 function MongoDb() {
     function connect(){
-        mongoose.connect(process.env.MONGODB_DEV_URL, {useNewUrlParser: true, useUnifiedTopology: true},
+        mongoose.set('strictQuery', true)
+        mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true},
             function (err) {
                 if (err) {
                     logger.error('Mongo DB error connection!')

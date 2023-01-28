@@ -7,8 +7,7 @@ function RequestConfig(data) {
         this.captcha = config['captcha_solver'];
         this.geolocation = config['geolocation'];
         this.userAgent = config['user_agent'];
-        this.windowHeight = config['window_height'];
-        this.windowWidth = config['window_width'];
+        this.viewPort = config['view_port'];
         this.customProxy = config['custom_proxy'];
     }
 }

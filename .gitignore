@@ -1,0 +1,9 @@
+.idea
+.env
+
+tests/cookies.json
+tests/credentials.json
+tests/facebook_auto.js
+tests/test.js
+
+node_modules

@@ -2,20 +2,20 @@ const express = require('express');
 const router = express.Router();
 const mongoDb = require('../utils/mongo');
 const os = require("os");
-const botEngine = require('../components/engine')
+const Browser = require('../components/browser')
 const logger = require('../utils/logger')("")
-const Screenshot = require('../models/screenshot_model')
+const Screenshot = require('../models/screenshotModel')
+const BrowserService = require('../services/browserService')
 mongoDb.connect()
-
-
-const timeout = 1500000
-const maxNumberOfBrowsersContexts = process.env.MAX_NUMBER_BROWSER_CONTEXTS
-const botInstance = botEngine;
-let browser = null;
-botInstance.initBrowser().then(value => {
+let browser;
+Browser.initBrowser().then(value => {
     browser = value
 })
 
+// logger.stream({sta}).on('log', function (log) {
+//     logObject.logs_array.push(JSON.stringify(log));
+//     logObject.save();
+// });
 
 
 router.get('/', async function (req, res) {
@@ -26,13 +26,12 @@ router.get('/', async function (req, res) {
     res.send(response);
 });
 
-
 router.get('/screenshots', async function (req, res) {
-    const response = {
-        message: 'Welcome to scrape the clouds',
-        hostname: os.hostname()
-    }
-    res.send(response);
+    res.send();
+});
+
+router.get('/logs', async function (req, res) {
+    res.send();
 });
 
 router.get('/api/image', async function (req, res) {
@@ -55,116 +54,27 @@ router.get('/api/image', async function (req, res) {
 });
 
 router.get('/api/close_context', async function (req, res) {
-    try {
-        const contextId = req.query.context_id
-        if (await botInstance.getContextById(contextId) !== undefined) {
-            await botInstance.closeBrowserContextById(contextId)
-            const response = {
-                hostname: os.hostname(),
-                message: `BrowserContext ${context_id} closed correctly`
-            }
-            res.send(response);
-        } else {
-            res.send({'error': `Context ${contextId} doesn't exist`})
-        }
-    } catch (error) {
-        logger.error(error.toString())
-        console.log(error)
-        res.send({error: JSON.stringify(error)})
-    }
+    const data = req.query
+    const result = await BrowserService.closeContext(data)
+    result.requestStatusCode = res.statusCode
+    res.send(result)
 });
 
 router.post('/api/run', async function (req, res) {
-    req.setTimeout(timeout);
-    try {
-        let data = req.body
-        while (browser.browserContexts().length === maxNumberOfBrowsersContexts) {
-            await sleep(1000)
-            logger.warn('Running maximum number of browsers')
-            logger.debug(`Amount of browserContexts: ${browserContexts}`)
-        }
-        const context = await botInstance.createBrowserContext(browser)
-        const page = await botInstance.createPageByContext(context)
-        const contextId = context.id
-        const result = await botInstance.runInstructions(contextId, page, data)
-        let extractRulesResponse = {}
-        if (result['message'] === 'Action required') {
-            setTimeout(async () => {
-                await botInstance.closeBrowserContextById(contextId)
-                logger.warn(`BrowserContext ${contextId} closed by timeout`)
-            }, 300000);
-        } else if (result['message'] === 'Instructions successfully executed') {
-            const resultPage = result['page']
-            extractRulesResponse = await botInstance.getResponseByContextPage(resultPage, data)
-            await botInstance.closeBrowserContextById(contextId)
-        }else if (result['message'] === 'No instructions'){
-            const resultPage = result['page']
-            extractRulesResponse = await botInstance.getResponseByContextPage(resultPage, data)
-            await botInstance.closeBrowserContextById(contextId)
-        }else {
-            await botInstance.closeBrowserContextById(contextId)
-        }
-        const response = {
-            hostname: os.hostname(),
-            status_code: 200,
-            contextId: result['contextId'],
-            instructions_result: result['message'],
-            extracts_rules_response: extractRulesResponse
-        }
-        res.send(response)
-    } catch (error) {
-        logger.error(error.toString())
-        console.log(error)
-        res.send({error: error.toString()})
-    }
+    const data = req.body
+    const result = await BrowserService.run(data, browser)
+    result.requestStatusCode = res.statusCode
+    res.send(result)
 });
 
 router.post('/api/run/2fa', async function (req, res) {
-    req.setTimeout(timeout);
-    let data = req.body
-    const contextId = data.context_id
-    try {
-        while (browser.browserContexts().length === maxNumberOfBrowsersContexts) {
-            await sleep(1000)
-            logger.warn('Running maximum number of browsersContexts')
-            logger.debug(`Amount of browserContexts: ${browserContexts}`)
-        }
-        if (await botInstance.getContextById(contextId) !== undefined) {
-            const page = await botInstance.getPageByContextId(contextId)
-            const result = await botInstance.runInstructionsAfter2fa(contextId, page, data)
-            let response = {
-                hostname: os.hostname(),
-                status_code: 200,
-                contextId: result['contextId'],
-                instructions_result: result['message']
-            }
-            if (result['message'] === 'Instructions successfully executed') {
-                const resultPage = result['page']
-                const extractRulesResponse = await botInstance.getResponseByContextPage(resultPage, data)
-                if (extractRulesResponse !== undefined && extractRulesResponse !== {}) {
-                    response['extract_rules_response'] = extractRulesResponse
-                    res.send(response)
-                }
-            } else {
-                res.send(response)
-            }
-        } else {
-            res.send({'error': `Context ${contextId} is undefined`})
-        }
-    } catch (error) {
-        logger.error(error.toString())
-        console.log(error)
-        res.send({error: error.toString()})
-    }
-    await botInstance.closeBrowserContextById(contextId)
-
+    const data = req.body
+    const result = await BrowserService.run2Fa(data, browser)
+    result.requestStatusCode = res.statusCode
+    res.send(result)
 });
 
 
-function sleep(ms) {
-    logger.warn('Running maximum number of browsers')
-    return new Promise(resolve => setTimeout(resolve, ms))
-}
 
 module.exports = router;
 
