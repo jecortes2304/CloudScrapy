@@ -1,9 +1,6 @@
-.idea
+.idea/
 .env
 
-tests/cookies.json
-tests/credentials.json
-tests/facebook_auto.js
-tests/test.js
+test_scripts/
 
-node_modules
+node_modules/

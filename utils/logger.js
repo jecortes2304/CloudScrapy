@@ -1,8 +1,6 @@
+const {mongodbConfig} = require("../configs/appConfig");
 const winston = require('winston');
 require('winston-mongodb');
-require('winston-daily-rotate-file');
-
-
 
 winston.addColors({ label: 'bold blueBG' });
 winston.addColors({ timestamp: 'magenta' });
@@ -27,13 +25,11 @@ const alignColorsAndTime = logsFormats => winston.format.combine(
     logsFormats
 );
 
-const dailyRotateFileTransport = filename => new winston.transports.DailyRotateFile({
+
+const fileNameTransport = filename => new winston.transports.File({
     level: 'silly',
-    filename: `${process.env.LOGS_PATH}/${filename}_%DATE%.log`,
-    maxSize: "1m",
-    format: winston.format.combine(alignColorsAndTime(logsNoColors)),
-    zippedArchive: true,
-    datePattern: 'DD_MM_YYYY'
+    filename: `${process.env.LOGS_PATH}/${filename}.log`,
+    format: winston.format.combine(winston.format.json(), alignColorsAndTime(logsNoColors)),
 });
 
 
@@ -45,13 +41,13 @@ const logger = function (filename) {
                 new (winston.transports.Console)({
                     format: winston.format.combine(winston.format.colorize({all: true}), alignColorsAndTime(logsColors)),
                 }),
-                dailyRotateFileTransport(filename),
+                fileNameTransport(filename),
                 new (winston.transports.MongoDB)({
                     autoReconnect: true,
                     useNewUrlParser: true,
                     useUnifiedTopology: true,
                     level: 'silly',
-                    db: process.env.MONGODB_URI,
+                    db: mongodbConfig.uri,
                     collection: 'logs_general',
                     format: winston.format.combine(alignColorsAndTime(logsColors))
                 }),
@@ -69,7 +65,7 @@ const logger = function (filename) {
                     useNewUrlParser: true,
                     useUnifiedTopology: true,
                     level: 'silly',
-                    db: process.env.MONGODB_URI,
+                    db: mongodbConfig.uri,
                     collection: 'logs_general',
                     format: winston.format.combine(alignColorsAndTime(logsColors))
                 }),

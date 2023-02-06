@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
  
-const Log = new Schema({
+const Pdf = new Schema({
   idContext: String,
   idRequest: String,
-  logUrl: String,
+  pdfUrl: String,
 },{
   timestamps: true,
 });
 
-const LogModel = mongoose.model('logs_requests', Log);
+const PdfModel = mongoose.model('pdf', Pdf);
 
-module.exports = LogModel;
+module.exports = PdfModel;

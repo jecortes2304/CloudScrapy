@@ -1,9 +1,10 @@
 const Redis = require('ioredis');
 const logger = require('../utils/logger')("")
+const appConfig = require('../configs/appConfig')
 
 const redisClient = new Redis({
-    host: process.env.REDIS_HOST,
-    port: process.env.REDIS_PORT
+    host: appConfig.redisConfig.host,
+    port: appConfig.redisConfig.port
 });
 
 redisClient.on("connect", () => {

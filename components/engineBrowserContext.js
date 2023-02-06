@@ -3,21 +3,19 @@ const {GetInResponse} = require('../objects/getInResponse')
 const {RequestConfig} = require('../objects/requestConfig')
 const {Response} = require("../objects/response");
 const Screenshot = require('../models/screenshotModel')
+const Log = require('../models/logModel')
+const Pdf = require('../models/pdfModel')
 const redis = require('../utils/redis')
 const useProxy = require('puppeteer-page-proxy');
-const UserAgent  = require('user-agents')
+const UserAgent = require('user-agents')
+const {appConfig} = require('../configs/appConfig')
 const pluginRecaptcha = require('puppeteer-extra-plugin-recaptcha')
-const {
-    EXECUTION_SUCCESS,
-    EXECUTION_FAILED,
-    ACTION_REQUIRED,
-    VERIFICATION_FAILED,
-    NO_EXECUTION
-} = require("../utils/constants");
-const axios = require("axios");
+const {EXECUTION_SUCCESS, EXECUTION_FAILED,
+    ACTION_REQUIRED, NO_EXECUTION} = require("../utils/constants");
+const {downloadBySelectors} = require("../utils/downloader");
 
 
-function BotEngine(browser, logger, requestId) {
+function BotEngineBrowserContext(browser, logger, requestId) {
 
     let responsePage;
 
@@ -103,12 +101,13 @@ function BotEngine(browser, logger, requestId) {
                     instructions[i]["options"],
                     page)
                 if (result) {
-                    if (instructions[i]["command"] === 'evaluate_sca') {
+                    if(instructions[i]["command"] === 'verify') {
                         logger.warn(`Action required`)
                         logger.info(`Instruction ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]}) executed`)
                         resultRunInstructions = {
                             "message": ACTION_REQUIRED.message,
                             "code": ACTION_REQUIRED.code,
+                            "page": page,
                             "contextId": contextId
                         }
                         const getResponse = new GetInResponse(argsJson)
@@ -127,23 +126,18 @@ function BotEngine(browser, logger, requestId) {
                         return resultRunInstructions
                     }
                 } else {
-                    if (instructions[i]["command"] === 'evaluate_sca') {
-                        logger.warn(`Sca verification failed`)
+                    if (instructions[i]["command"] === 'verify') {
+                        logger.warn(`Verify verification failed`)
                         logger.info(`Instruction ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]}) executed`)
+                    }else {
+                        logger.error(`Error in instruction ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]})`)
                         resultRunInstructions = {
-                            "message": VERIFICATION_FAILED.message,
-                            "code": VERIFICATION_FAILED.code,
+                            "message": `${EXECUTION_FAILED.message} on ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]})`,
+                            "code": EXECUTION_FAILED.code,
                             "contextId": contextId
                         }
                         return resultRunInstructions
                     }
-                    logger.error(`Error in instruction ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]})`)
-                    resultRunInstructions = {
-                        "message": `${EXECUTION_FAILED.message} on ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]})`,
-                        "code": EXECUTION_FAILED.code,
-                        "contextId": contextId
-                    }
-                    return resultRunInstructions
                 }
             } catch (error) {
                 resultRunInstructions = {
@@ -158,7 +152,65 @@ function BotEngine(browser, logger, requestId) {
     }
 
 
-    async function runInstructionsAfter2fa(contextId, page, argsJson) {
+    // async function runInstructionsAfter2fa(contextId, page, argsJson) {
+    //     let resultRunInstructions = {}
+    //     const request = new Request(argsJson);
+    //     const instructions = request.instructions
+    //
+    //     let arrayInstructionsLength
+    //     if (instructions === undefined || instructions.length === 0) {
+    //         resultRunInstructions = {
+    //             "message": `${NO_EXECUTION.message}`,
+    //             "code": EXECUTION_FAILED.code,
+    //             "page": page,
+    //             "contextId": contextId
+    //         }
+    //         return resultRunInstructions
+    //     } else {
+    //         arrayInstructionsLength = instructions.length;
+    //     }
+    //
+    //     for (let i = 0; i < arrayInstructionsLength; i++) {
+    //         try {
+    //             let result = await executeInstruction(instructions[i]["command"], instructions[i]["params"],
+    //                 instructions[i]["options"], page)
+    //             if (result === true) {
+    //                 logger.info(`Instruction ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]}) executed`)
+    //                 if (arrayInstructionsLength - 1 === i) {
+    //                     logger.info(`All instructions were successfully executed`)
+    //                     resultRunInstructions = {
+    //                         "message": EXECUTION_SUCCESS.message,
+    //                         "code": EXECUTION_SUCCESS.code,
+    //                         "contextId": contextId,
+    //                         "page": page
+    //                     }
+    //                     return resultRunInstructions
+    //                 }
+    //             } else {
+    //                 logger.error(`Error in instruction ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]})`)
+    //                 resultRunInstructions = {
+    //                     "message": `${EXECUTION_FAILED.message} on ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]})`,
+    //                     "code": EXECUTION_FAILED.code,
+    //                     "contextId": contextId
+    //                 }
+    //                 return resultRunInstructions
+    //             }
+    //         } catch (error) {
+    //             resultRunInstructions = {
+    //                 "message": `${EXECUTION_FAILED.message} Error ${error}`,
+    //                 "code": `${EXECUTION_FAILED.code} Error ${error}`,
+    //                 "contextId": contextId
+    //             }
+    //             logger.error(error)
+    //             return resultRunInstructions
+    //         }
+    //     }
+    //
+    // }
+
+
+    async function runInstructionsActionRequired(contextId, page, argsJson, requestDescription) {
+        logger.info(`Request description: ${requestDescription}`)
         let resultRunInstructions = {}
         const request = new Request(argsJson);
         const instructions = request.instructions
@@ -166,8 +218,8 @@ function BotEngine(browser, logger, requestId) {
         let arrayInstructionsLength
         if (instructions === undefined || instructions.length === 0) {
             resultRunInstructions = {
-                "message": `${NO_EXECUTION.message}`,
-                "code": EXECUTION_FAILED.code,
+                "message": NO_EXECUTION.message,
+                "code": NO_EXECUTION.code,
                 "page": page,
                 "contextId": contextId
             }
@@ -175,43 +227,60 @@ function BotEngine(browser, logger, requestId) {
         } else {
             arrayInstructionsLength = instructions.length;
         }
-
         for (let i = 0; i < arrayInstructionsLength; i++) {
             try {
                 let result = await executeInstruction(instructions[i]["command"], instructions[i]["params"],
                     instructions[i]["options"], page)
-                if (result === true) {
+                if (result) {
+                    if(instructions[i]["command"] === 'verify') {
+                        logger.warn(`Action required`)
+                        logger.info(`Instruction ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]}) executed`)
+                        resultRunInstructions = {
+                            "message": ACTION_REQUIRED.message,
+                            "code": ACTION_REQUIRED.code,
+                            "page": page,
+                            "contextId": contextId
+                        }
+                        // const getResponse = new GetInResponse(argsJson)
+                        // await redis.set(contextId, JSON.stringify(getResponse))
+                        return resultRunInstructions
+                    }
                     logger.info(`Instruction ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]}) executed`)
                     if (arrayInstructionsLength - 1 === i) {
                         logger.info(`All instructions were successfully executed`)
                         resultRunInstructions = {
                             "message": EXECUTION_SUCCESS.message,
                             "code": EXECUTION_SUCCESS.code,
-                            "contextId": contextId,
-                            "page": page
+                            "page": page,
+                            "contextId": contextId
                         }
                         return resultRunInstructions
                     }
                 } else {
-                    logger.error(`Error in instruction ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]})`)
-                    resultRunInstructions = {
-                        "message": `${EXECUTION_FAILED.message} on ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]})`,
-                        "code": EXECUTION_FAILED.code,
-                        "contextId": contextId
+                    if (instructions[i]["command"] === 'verify') {
+                        logger.warn(`Verify verification failed`)
+                        logger.info(`Instruction ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]}) executed`)
+                    }else {
+                        logger.error(`Error in instruction ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]})`)
+                        resultRunInstructions = {
+                            "message": `${EXECUTION_FAILED.message} on ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]})`,
+                            "code": EXECUTION_FAILED.code,
+                            "page": page,
+                            "contextId": contextId
+                        }
+                        return resultRunInstructions
                     }
-                    return resultRunInstructions
                 }
             } catch (error) {
                 resultRunInstructions = {
                     "message": `${EXECUTION_FAILED.message} Error ${error}`,
-                    "code": `${EXECUTION_FAILED.code} Error ${error}`,
+                    "code": EXECUTION_FAILED.code,
                     "contextId": contextId
                 }
                 logger.error(error)
                 return resultRunInstructions
             }
         }
-
     }
 
 
@@ -222,17 +291,16 @@ function BotEngine(browser, logger, requestId) {
             const responseFromRedis = await redis.get(contextId)
             logger.info(`getInResponse from 2fa founded: ${contextId}`)
             getInResponse = JSON.parse(responseFromRedis)
-            await redis.del(contextId)
+            // await redis.del(contextId)
         } else {
             getInResponse = new GetInResponse(argsJson)
             logger.info(`getInResponse created as new`)
         }
         if (getInResponse !== null) {
             const response = new Response();
-            response.contextId = contextId
             logger.info(`Creating response and getting extract rules for context: ${contextId}`)
             for (let key in getInResponse) {
-                await getContentResponseByKey(key, getInResponse, page, response, responsePage)
+                await getContentResponseByKey(contextId, key, getInResponse, page, response, responsePage)
             }
             return response;
         } else {
@@ -256,17 +324,12 @@ function BotEngine(browser, logger, requestId) {
         const contextToOverridePermissions = await getContextById(contextId)
         const requestConfig = new RequestConfig(params)
         const getInResponse = new GetInResponse(params)
-
+        const logs = getInResponse.logs;
         if (Object.keys(requestConfig).length === 0) {
             logger.info(`No configs request`)
-            if (getInResponse !== undefined) {
-                if (getInResponse.logs !== undefined) {
-                    const fullLogs = getInResponse.logs.full_logs
-                    if (fullLogs !== undefined) {
-                        if (fullLogs === true) {
-                            await loggerRequestsResponses(page)
-                        }
-                    }
+            if (logs.fullLogs !== undefined) {
+                if (logs.fullLogs === true) {
+                    await loggerRequestsResponses(page)
                 }
             }
         } else {
@@ -296,11 +359,11 @@ function BotEngine(browser, logger, requestId) {
                     case 'blockResources':
                         try {
                             if (requestConfig.blockResources !== undefined) {
-                                await blockResources(page, requestConfig.blockResources, fullLogs)
+                                await blockResources(page, requestConfig.blockResources, logs.fullLogs)
                                 logger.info(`Request config ${key} correctly applied`)
                             } else {
-                                if (fullLogs !== undefined) {
-                                    if (fullLogs === true) {
+                                if (logs.fullLogs !== undefined) {
+                                    if (logs.fullLogs === true) {
                                         await loggerRequestsResponses(page)
                                     }
                                 }
@@ -347,12 +410,7 @@ function BotEngine(browser, logger, requestId) {
                                 await page.setUserAgent(requestConfig.userAgent)
                                 logger.info(`Request config ${key} correctly applied`)
                             } else {
-                                let userAgent
-                                if (page.viewport().isMobile === true){
-                                    userAgent = new UserAgent({deviceCategory: 'mobile'});
-                                }else {
-                                    userAgent = new UserAgent({deviceCategory: 'desktop'});
-                                }
+                                const userAgent = new UserAgent().toString()
                                 await page.setUserAgent(userAgent)
                                 logger.info(`Setting randomUserAgent correctly: ${userAgent}`)
                             }
@@ -473,8 +531,8 @@ function BotEngine(browser, logger, requestId) {
     }
 
 
-    async function getContentResponseByKey(key, getInResponse, page, response, responsePageParam) {
-        const contextId = page.browserContext().id
+    async function getContentResponseByKey(contextId, key, getInResponse, page, response, responsePageParam) {
+        const {host, port} = appConfig
         if (getInResponse === undefined) {
             logger.warn(`No keys to return response`)
         } else {
@@ -503,24 +561,29 @@ function BotEngine(browser, logger, requestId) {
                 case "screenshot":
                     if (getInResponse.screenshot !== undefined) {
                         let screenshot = new Screenshot({
-                            id_context: contextId,
-                            href: page.url()
+                            idContext: contextId,
+                            idRequest: requestId,
+                            urlPage: page.url()
                         })
                         try {
+                            const {host, port} = appConfig
                             const screenshotObject = getInResponse.screenshot
                             const fullPageFlag = screenshotObject["full_page"]
-                            const pathImage = `${process.env.IMAGES_PATH}${contextId}.jpg`
+                            const fileName = `${requestId}_${Date.now()}.jpg`
+                            const imagePath = `${process.env.IMAGES_PATH}${fileName}`
+                            const imageUrl = `${host}:${port}/api/files/public/screenshots/${fileName}`
+                            const imageUrlResponse = `${host}:${port}/api/files/image-info?image_request_id=${fileName.split('_')[0]}`
                             if (screenshotObject["active"]) {
                                 await page.screenshot({
-                                    path: pathImage,
+                                    path: imagePath,
                                     quality: 50,
                                     type: 'jpeg',
                                     fullPage: fullPageFlag
                                 })
-                                screenshot.image_path = pathImage;
-                                logger.info(`Image pushed to screenshot directory ${contextId}.jpg`)
-                                response.screenshot = pathImage
+                                screenshot.imageUrl = imageUrl;
+                                response.screenshot = imageUrlResponse
                                 logger.info(`${key} get it correctly`)
+                                logger.info(`Image pushed to database ${fileName}.jpg`)
                             }
                         } catch (error) {
                             logger.error(`Error getting ${key}-->${error}`)
@@ -530,27 +593,33 @@ function BotEngine(browser, logger, requestId) {
                     }
                     break
                 case "logs":
-                    //In construction
+                    let log = new Log({
+                        idContext: contextId,
+                        idRequest: requestId
+                    })
                     try {
                         if (getInResponse.logs !== undefined) {
-                            const pathLogs = `${process.env.LOGS_PATH}${requestId}.log`
-                            getInResponse.logs.active === true ? response.logs = pathLogs : response.logs = {}
+                            const fileName = await redis.get(`logName_${requestId}`)
+                            const logUrl = `${host}:${port}/api/files/public/logs/${fileName}.log`
+                            const logUrlResponse = `${host}:${port}/api/files/log-info?log_request_id=${fileName.split('_')[0]}`
+                            log.logUrl = logUrl
+                            getInResponse.logs.active === true ? response.logs = logUrlResponse : response.logs = {}
                             logger.info(`${key} get it correctly`)
+                            logger.info(`Log pushed to database ${fileName}.log`)
                         }
+                        await log.save()
                     } catch (error) {
                         logger.error(`Error getting ${key}-->${error}`)
                     }
                     break
                 case "htmlToPdf":
-                    //In construction
                     try {
-                        if (getInResponse.logs !== undefined) {
+                        if (getInResponse.htmlToPdf !== undefined) {
                             const buffer = await page.pdf({format: "A4"});
                             const pdfBase64 = buffer.toString('base64');
                             getInResponse.htmlToPdf === true ? response.htmlToPdf = pdfBase64 : response.htmlToPdf = ""
                             logger.info(`${key} get it correctly`)
                         }
-
                     } catch (error) {
                         logger.error(`Error getting ${key}-->${error}`)
                     }
@@ -567,22 +636,28 @@ function BotEngine(browser, logger, requestId) {
                     break
                 case "downloadFiles":
                     //In construction
+                    let pdf = new Pdf({
+                        idContext: contextId,
+                        idRequest: requestId
+                    })
                     try {
                         if (getInResponse.downloadFiles !== undefined) {
-                            const urls = getInResponse.downloadFiles.urls
-                            const encodingType = getInResponse.downloadFiles.encoding_type
-                            if (urls.length > 0) {
-                                let files = []
-                                for (let url of urls) {
-                                    let file = await downloadFile(url, encodingType)
-                                    files.push(file)
-                                }
-                                response.downloadFiles = files
+                            const selectors = getInResponse.downloadFiles.selectors
+                            if (selectors.length > 0) {
+                                let filesUrls = []
+                                let filesDir = `${requestId}_${Date.now()}`
+                                await downloadBySelectors(selectors, filesDir, page)
+                                let pdfUrl = `${host}:${port}/api/files/public/pdfs/${filesDir}.pdf`
+                                let pdfUrlResponse = `${host}:${port}/api/files/pdf-info?pdf_request_id=${filesDir.split('_')[0]}`
+                                pdf.pdfUrl = pdfUrl
+                                filesUrls.push(pdfUrlResponse)
+                                response.downloadFiles = filesUrls
                             } else {
                                 response.downloadFiles = ""
                             }
                             logger.info(`${key} get it correctly`)
                         }
+                        await pdf.save()
                     } catch (error) {
                         logger.error(`Error getting ${key}-->${error}`)
                     }
@@ -694,40 +769,16 @@ function BotEngine(browser, logger, requestId) {
                     return true
                 } catch (error) {
                     logger.error(`Error evaluate ${error}`)
-                    console.log(`Error evaluate ${error}`)
                     return false
                 }
-            case "evaluate_sca":
+            case "verify":
                 try {
                     const stringProve = params[0];
                     logger.info(`StringProve: ${stringProve}`)
-                    return await page.waitForFunction(`(document.documentElement.outerHTML).includes('${stringProve}')`)
+                    let htmlPage = await page.content()
+                    return htmlPage.includes(stringProve)
                 } catch (error) {
-                    logger.error(`Error evaluate_sca ${error}`)
-                    return false
-                }
-            case "verify_and_execute":
-                try {
-                    const stringProve = params[0];
-                    logger.info(`StringProve: ${stringProve}`)
-                    const result = await page.evaluate(`(document.documentElement.outerHTML).includes('${stringProve}')`)
-                    if (result === true) {
-                        logger.info(`String verified and executing new set of instructions`)
-                        const nestedInstructions = params[1];
-                        const lentInstructions = nestedInstructions.length
-                        for (let i = 0; i < lentInstructions; i++) {
-                            await executeInstruction(nestedInstructions[i]['command'], nestedInstructions[i]['params'],
-                                nestedInstructions[i]['options'], page)
-                            logger.info(`Nested instruction ${(i + 1)}/${lentInstructions}-(${nestedInstructions[i]["command"]}) executed`)
-                        }
-                        logger.info(`All nested instructions were executed`)
-                        return true
-                    } else {
-                        logger.info(`String verified and continue with normal execution`)
-                        return true
-                    }
-                } catch (error) {
-                    logger.error(`Error verify_and_execute ${error}`)
+                    logger.error(`Error verify ${error}`)
                     return false
                 }
             case "wait_for_function":
@@ -736,7 +787,6 @@ function BotEngine(browser, logger, requestId) {
                     return true
                 } catch (error) {
                     logger.error(`Error waitForFunction ${error}`)
-                    console.log(error)
                     return false
                 }
             case "xpath":
@@ -755,8 +805,17 @@ function BotEngine(browser, logger, requestId) {
                     logger.error(`Error type ${error}`)
                     return false
                 }
+            case "keyboard_pres":
+                try {
+                    await page.keyboard.press(params[0], options)
+                    return true
+                } catch (error) {
+                    logger.error(`Error type ${error}`)
+                    return false
+                }
         }
     }
+
 
 
     return Object.freeze({
@@ -765,17 +824,13 @@ function BotEngine(browser, logger, requestId) {
         getPageByContextId,
         createPageByContext,
         createBrowserContext,
-        runInstructionsAfter2fa,
+        // runInstructionsAfter2fa,
+        runInstructionsActionRequired,
         closeBrowserContextById,
         getResponseByContextPage
     })
 
 }
 
-async function downloadFile(url, encodeType) {
-    return axios.get(url, {responseType: 'arraybuffer'})
-        .then(response => Buffer.from(response.data, 'binary').toString(encodeType))
-}
 
-
-module.exports = {BotEngine};
+module.exports = {BotEngineBrowserContext};

@@ -2,10 +2,13 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
  
 const Screenshot = new Schema({
-  id_context: String,
-  href: String,
-  image_path: String,
+  idContext: String,
+  idRequest: String,
+  urlPage: String,
+  imageUrl: String,
   error: String
+},{
+  timestamps: true,
 });
 
 const ScreenshotModel = mongoose.model('Screenshot', Screenshot);
