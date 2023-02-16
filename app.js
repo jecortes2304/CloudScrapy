@@ -9,8 +9,8 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const swaggerUi = require('swagger-ui-express')
 
-
 const app = express();
+
 
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config();
@@ -21,9 +21,13 @@ const usersRouter = require('./routes/usersRoutes');
 const filesRouter = require('./routes/filesRoutes');
 const indexRouter = require('./routes/indexRoutes');
 
+//SETTING VIEWS
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
+//SETTING CONFIGS OF APP
+app.use(express.json({limit: '50mb'}));
+app.use(express.urlencoded({limit: '50mb'}));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(cors(corsConfig));
@@ -31,8 +35,9 @@ app.use(express.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile, apiDocsOptionsUI))
+//SETTING ROUTERS AND ENDPOINTS
 app.use(indexRouter);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile, apiDocsOptionsUI))
 app.use('/api/users', usersRouter);
 app.use('/api/files',verifyToken, filesRouter);
 app.use('/api/engine',verifyToken, engineRoutes);

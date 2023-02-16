@@ -1,5 +1,5 @@
 {
-  "swagger": "2.0",
+  "openapi": "3.0.0",
   "info": {
     "title": "Cloud Scrapy API",
     "version": "0.0.1",
@@ -14,30 +14,15 @@
       "email": "layusoelu@lucual18.es"
     }
   },
-  "host": "localhost:3000",
   "servers": [
     {
-      "url": "http://localhost:3000"
+      "url": "http://localhost:3000/",
+      "description": "dev server"
+    },
+    {
+      "url": "http://localhost:5000/",
+      "description": "docker dev server"
     }
-  ],
-  "basePath": "/",
-  "schemes": [
-    "http",
-    "https"
-  ],
-  "securityDefinitions": {
-    "apiKeyAuth": {
-      "type": "apiKey",
-      "in": "header",
-      "name": "X-API-Key",
-      "description": "Cloud Scrapy key to authenticate"
-    }
-  },
-  "consumes": [
-    "application/json"
-  ],
-  "produces": [
-    "application/json"
   ],
   "paths": {
     "/": {
@@ -60,32 +45,33 @@
           "Users"
         ],
         "description": "Endpoint to handle users",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "email": {
-                  "example": "any"
-                },
-                "password": {
-                  "example": "any"
-                },
-                "name": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK"
           },
           "400": {
             "description": "Bad Request"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "example": "any"
+                  },
+                  "password": {
+                    "example": "any"
+                  },
+                  "name": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -96,29 +82,30 @@
           "Users"
         ],
         "description": "Endpoint to handle users",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "email": {
-                  "example": "any"
-                },
-                "password": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK"
           },
           "400": {
             "description": "Bad Request"
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "example": "any"
+                  },
+                  "password": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -134,7 +121,9 @@
             "name": "imageName",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -160,7 +149,9 @@
             "name": "logName",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -180,13 +171,15 @@
         "tags": [
           "Files"
         ],
-        "description": "Download a pdf file passing the exact name",
+        "description": "Download an image file passing the exact name",
         "parameters": [
           {
             "name": "pdfName",
             "in": "path",
             "required": true,
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -211,7 +204,9 @@
           {
             "name": "log_request_id",
             "in": "query",
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -236,7 +231,9 @@
           {
             "name": "image_request_id",
             "in": "query",
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -261,7 +258,9 @@
           {
             "name": "pdf_request_id",
             "in": "query",
-            "type": "string"
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -288,7 +287,7 @@
             "in": "body",
             "description": "Full execution request parameters",
             "schema": {
-              "$ref": "#/definitions/Execution"
+              "$ref": "#/components/schemas/Execution"
             }
           }
         ],
@@ -301,31 +300,38 @@
           {
             "apiKeyAuth": []
           }
-        ]
-      }
-    },
-    "/api/engine/execute/2fa": {
-      "post": {
-        "tags": [
-          "Engine"
         ],
-        "description": "Execute a set of instructions in a browserContext waiting for action required ",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "context_id": {
-                  "example": "any"
-                },
-                "request_id": {
-                  "example": "any"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "request_description": {
+                    "example": "any"
+                  }
                 }
               }
             }
           }
+        }
+      }
+    },
+    "/api/engine/execute/solve-action-required": {
+      "post": {
+        "tags": [
+          "Engine"
+        ],
+        "description": "Execute a set of instructions in a new browserContext of the user",
+        "parameters": [
+          {
+            "name": "obj",
+            "in": "body",
+            "description": "Full execution request parameters",
+            "schema": {
+              "$ref": "#/components/schemas/Execution"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -336,7 +342,27 @@
           {
             "apiKeyAuth": []
           }
-        ]
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "context_id": {
+                    "example": "any"
+                  },
+                  "request_id": {
+                    "example": "any"
+                  },
+                  "request_description": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/engine/close-context": {
@@ -345,20 +371,7 @@
           "Engine"
         ],
         "description": "Force browserContext to close and deleted if exist",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "context_id": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "OK"
@@ -368,125 +381,149 @@
           {
             "apiKeyAuth": []
           }
-        ]
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "context_id": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
-  "definitions": {
-    "Execution": {
-      "type": "object",
-      "properties": {
-        "request_description": {
-          "type": "string",
-          "example": "Searching on google a word and click first link"
-        },
-        "send_in_request": {
-          "type": "object",
-          "properties": {
-            "url": {
-              "type": "string",
-              "example": "https://www.google.com"
-            },
-            "options": {
-              "type": "object",
-              "properties": {
-                "waitUntil": {
-                  "type": "string",
-                  "example": "networkidle0"
-                }
-              }
-            },
-            "instructions": {
-              "type": "array",
-              "items": {
+  "components": {
+    "schemas": {
+      "Execution": {
+        "type": "object",
+        "properties": {
+          "request_description": {
+            "type": "string",
+            "example": "Searching on google a word and click first link"
+          },
+          "send_in_request": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string",
+                "example": "https://www.google.com"
+              },
+              "options": {
                 "type": "object",
                 "properties": {
-                  "command": {
+                  "waitUntil": {
                     "type": "string",
-                    "example": "type"
-                  },
-                  "params": {
-                    "type": "array",
-                    "example": [
-                      "input[name='q']",
-                      "lucual18"
-                    ],
-                    "items": {
-                      "type": "string"
-                    }
-                  },
-                  "options": {
-                    "type": "object",
-                    "properties": {
-                      "delay": {
-                        "type": "number",
-                        "example": 10
+                    "example": "networkidle0"
+                  }
+                }
+              },
+              "instructions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "command": {
+                      "type": "string",
+                      "example": "type"
+                    },
+                    "params": {
+                      "type": "array",
+                      "example": [
+                        "input[name='q']",
+                        "lucual18"
+                      ],
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "options": {
+                      "type": "object",
+                      "properties": {
+                        "delay": {
+                          "type": "number",
+                          "example": 10
+                        }
                       }
                     }
                   }
                 }
               }
             }
-          }
-        },
-        "get_in_response": {
-          "type": "object",
-          "properties": {
-            "cookies": {
-              "type": "boolean",
-              "example": true
-            },
-            "headers": {
-              "type": "boolean",
-              "example": true
-            },
-            "logs": {
-              "type": "object",
-              "properties": {
-                "active": {
-                  "type": "boolean",
-                  "example": true
-                },
-                "full_logs": {
-                  "type": "boolean",
-                  "example": false
+          },
+          "get_in_response": {
+            "type": "object",
+            "properties": {
+              "cookies": {
+                "type": "boolean",
+                "example": true
+              },
+              "headers": {
+                "type": "boolean",
+                "example": true
+              },
+              "logs": {
+                "type": "object",
+                "properties": {
+                  "active": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "full_logs": {
+                    "type": "boolean",
+                    "example": false
+                  }
                 }
-              }
-            },
-            "screenshot": {
-              "type": "object",
-              "properties": {
-                "active": {
-                  "type": "boolean",
-                  "example": true
-                },
-                "full_page": {
-                  "type": "boolean",
-                  "example": false
+              },
+              "screenshot": {
+                "type": "object",
+                "properties": {
+                  "active": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "full_page": {
+                    "type": "boolean",
+                    "example": false
+                  }
                 }
+              },
+              "source_page": {
+                "type": "boolean",
+                "example": true
               }
-            },
-            "source_page": {
-              "type": "boolean",
-              "example": true
             }
-          }
-        },
-        "request_config": {
-          "type": "object",
-          "properties": {
-            "block_resources": {
-              "type": "array",
-              "example": [
-                "image",
-                "video"
-              ],
-              "items": {
-                "type": "string"
+          },
+          "request_config": {
+            "type": "object",
+            "properties": {
+              "block_resources": {
+                "type": "array",
+                "example": [
+                  "image",
+                  "video"
+                ],
+                "items": {
+                  "type": "string"
+                }
               }
             }
           }
         }
+      }
+    },
+    "securitySchemes": {
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "Cloud Scrapy key to authenticate"
       }
     }
   },

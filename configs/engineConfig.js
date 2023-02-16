@@ -3,6 +3,23 @@ const engineConfig = {
         headless: true,
         defaultViewport: null,
         ignoreHTTPSErrors: true,
+        args: [
+            '--start-maximized',
+            '--no-sandbox',
+            '--disable-gpu',
+            '--incognito',
+            '--no-zygote',
+            '--disable-dev-shm-usage',
+            '--disable-extensions',
+            '--disable-dev-tools',
+            '--ignore-certificate-errors',
+            '--lang=es-ES,es;q=0.9'
+        ]
+    },
+    config_2: {
+        headless: true,
+        defaultViewport: null,
+        ignoreHTTPSErrors: true,
         ignoreDefaultArgs: [
             '--enable-automation'
         ],
@@ -21,7 +38,7 @@ const engineConfig = {
             '--lang=es-ES,es;q=0.9'
         ]
     },
-    config_2: {
+    config_3: {
         headless: false,
         defaultViewport: null,
         ignoreDefaultArgs: [

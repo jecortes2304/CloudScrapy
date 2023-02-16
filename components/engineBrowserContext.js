@@ -10,8 +10,10 @@ const useProxy = require('puppeteer-page-proxy');
 const UserAgent = require('user-agents')
 const {appConfig} = require('../configs/appConfig')
 const pluginRecaptcha = require('puppeteer-extra-plugin-recaptcha')
-const {EXECUTION_SUCCESS, EXECUTION_FAILED,
-    ACTION_REQUIRED, NO_EXECUTION} = require("../utils/constants");
+const {
+    EXECUTION_SUCCESS, EXECUTION_FAILED,
+    ACTION_REQUIRED, NO_EXECUTION
+} = require("../utils/constants");
 const {downloadBySelectors} = require("../utils/downloader");
 
 
@@ -46,6 +48,7 @@ function BotEngineBrowserContext(browser, logger, requestId) {
             }
         } else {
             logger.error(`Browser is undefined yet`)
+            return undefined
         }
 
     }
@@ -86,7 +89,6 @@ function BotEngineBrowserContext(browser, logger, requestId) {
             resultRunInstructions = {
                 "message": NO_EXECUTION.message,
                 "code": NO_EXECUTION.code,
-                "page": page,
                 "contextId": contextId
             }
             return resultRunInstructions
@@ -101,13 +103,12 @@ function BotEngineBrowserContext(browser, logger, requestId) {
                     instructions[i]["options"],
                     page)
                 if (result) {
-                    if(instructions[i]["command"] === 'verify') {
+                    if (instructions[i]["command"] === 'verify') {
                         logger.warn(`Action required`)
                         logger.info(`Instruction ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]}) executed`)
                         resultRunInstructions = {
                             "message": ACTION_REQUIRED.message,
                             "code": ACTION_REQUIRED.code,
-                            "page": page,
                             "contextId": contextId
                         }
                         const getResponse = new GetInResponse(argsJson)
@@ -120,16 +121,26 @@ function BotEngineBrowserContext(browser, logger, requestId) {
                         resultRunInstructions = {
                             "message": EXECUTION_SUCCESS.message,
                             "code": EXECUTION_SUCCESS.code,
-                            "page": page,
                             "contextId": contextId
                         }
                         return resultRunInstructions
                     }
                 } else {
                     if (instructions[i]["command"] === 'verify') {
-                        logger.warn(`Verify verification failed`)
                         logger.info(`Instruction ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]}) executed`)
-                    }else {
+                        if (arrayInstructionsLength - 1 === i) {
+                            logger.warn(`Source page verification failed and returned result`)
+                            logger.info(`All instructions were successfully executed`)
+                            resultRunInstructions = {
+                                "message": EXECUTION_SUCCESS.message,
+                                "code": EXECUTION_SUCCESS.code,
+                                "contextId": contextId
+                            }
+                            return resultRunInstructions
+                        } else {
+                            logger.warn(`Source page verification failed and continue`)
+                        }
+                    } else {
                         logger.error(`Error in instruction ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]})`)
                         resultRunInstructions = {
                             "message": `${EXECUTION_FAILED.message} on ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]})`,
@@ -151,62 +162,6 @@ function BotEngineBrowserContext(browser, logger, requestId) {
         }
     }
 
-
-    // async function runInstructionsAfter2fa(contextId, page, argsJson) {
-    //     let resultRunInstructions = {}
-    //     const request = new Request(argsJson);
-    //     const instructions = request.instructions
-    //
-    //     let arrayInstructionsLength
-    //     if (instructions === undefined || instructions.length === 0) {
-    //         resultRunInstructions = {
-    //             "message": `${NO_EXECUTION.message}`,
-    //             "code": EXECUTION_FAILED.code,
-    //             "page": page,
-    //             "contextId": contextId
-    //         }
-    //         return resultRunInstructions
-    //     } else {
-    //         arrayInstructionsLength = instructions.length;
-    //     }
-    //
-    //     for (let i = 0; i < arrayInstructionsLength; i++) {
-    //         try {
-    //             let result = await executeInstruction(instructions[i]["command"], instructions[i]["params"],
-    //                 instructions[i]["options"], page)
-    //             if (result === true) {
-    //                 logger.info(`Instruction ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]}) executed`)
-    //                 if (arrayInstructionsLength - 1 === i) {
-    //                     logger.info(`All instructions were successfully executed`)
-    //                     resultRunInstructions = {
-    //                         "message": EXECUTION_SUCCESS.message,
-    //                         "code": EXECUTION_SUCCESS.code,
-    //                         "contextId": contextId,
-    //                         "page": page
-    //                     }
-    //                     return resultRunInstructions
-    //                 }
-    //             } else {
-    //                 logger.error(`Error in instruction ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]})`)
-    //                 resultRunInstructions = {
-    //                     "message": `${EXECUTION_FAILED.message} on ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]})`,
-    //                     "code": EXECUTION_FAILED.code,
-    //                     "contextId": contextId
-    //                 }
-    //                 return resultRunInstructions
-    //             }
-    //         } catch (error) {
-    //             resultRunInstructions = {
-    //                 "message": `${EXECUTION_FAILED.message} Error ${error}`,
-    //                 "code": `${EXECUTION_FAILED.code} Error ${error}`,
-    //                 "contextId": contextId
-    //             }
-    //             logger.error(error)
-    //             return resultRunInstructions
-    //         }
-    //     }
-    //
-    // }
 
 
     async function runInstructionsActionRequired(contextId, page, argsJson, requestDescription) {
@@ -220,7 +175,6 @@ function BotEngineBrowserContext(browser, logger, requestId) {
             resultRunInstructions = {
                 "message": NO_EXECUTION.message,
                 "code": NO_EXECUTION.code,
-                "page": page,
                 "contextId": contextId
             }
             return resultRunInstructions
@@ -232,13 +186,13 @@ function BotEngineBrowserContext(browser, logger, requestId) {
                 let result = await executeInstruction(instructions[i]["command"], instructions[i]["params"],
                     instructions[i]["options"], page)
                 if (result) {
-                    if(instructions[i]["command"] === 'verify') {
+                    if (instructions[i]["command"] === 'verify') {
                         logger.warn(`Action required`)
                         logger.info(`Instruction ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]}) executed`)
                         resultRunInstructions = {
                             "message": ACTION_REQUIRED.message,
                             "code": ACTION_REQUIRED.code,
-                            "page": page,
+                            // "page": page,
                             "contextId": contextId
                         }
                         // const getResponse = new GetInResponse(argsJson)
@@ -251,21 +205,31 @@ function BotEngineBrowserContext(browser, logger, requestId) {
                         resultRunInstructions = {
                             "message": EXECUTION_SUCCESS.message,
                             "code": EXECUTION_SUCCESS.code,
-                            "page": page,
                             "contextId": contextId
                         }
                         return resultRunInstructions
                     }
                 } else {
                     if (instructions[i]["command"] === 'verify') {
-                        logger.warn(`Verify verification failed`)
                         logger.info(`Instruction ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]}) executed`)
-                    }else {
+                        if (arrayInstructionsLength - 1 === i) {
+                            logger.warn(`Source page verification failed and returned result`)
+                            logger.info(`All instructions were successfully executed`)
+                            resultRunInstructions = {
+                                "message": EXECUTION_SUCCESS.message,
+                                "code": EXECUTION_SUCCESS.code,
+                                // "page": page,
+                                "contextId": contextId
+                            }
+                            return resultRunInstructions
+                        } else {
+                            logger.warn(`Source page verification failed and continue`)
+                        }
+                    } else {
                         logger.error(`Error in instruction ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]})`)
                         resultRunInstructions = {
                             "message": `${EXECUTION_FAILED.message} on ${(i + 1)}/${arrayInstructionsLength}-(${instructions[i]["command"]})`,
                             "code": EXECUTION_FAILED.code,
-                            "page": page,
                             "contextId": contextId
                         }
                         return resultRunInstructions
@@ -284,8 +248,9 @@ function BotEngineBrowserContext(browser, logger, requestId) {
     }
 
 
-    async function getResponseByContextPage(contextId, page, argsJson) {
+    async function getResponseByContextPage(contextId, argsJson) {
         const found = await redis.exists(contextId)
+        const page = await getPageByContextId(contextId)
         let getInResponse;
         if (found === 1) {
             const responseFromRedis = await redis.get(contextId)
@@ -714,6 +679,17 @@ function BotEngineBrowserContext(browser, logger, requestId) {
                     logger.error(`Error click ${error}`)
                     return false
                 }
+            case "click_and_wait":
+                try {
+                    await Promise.all([
+                        page.click(params[0]),
+                        page.waitForNavigation(options)
+                    ]);
+                    return true
+                } catch (error) {
+                    logger.error(`Error click_and_wait ${error}`)
+                    return false
+                }
             case "wait_for_timeout":
                 try {
                     await page.waitForTimeout(params[0])
@@ -817,14 +793,12 @@ function BotEngineBrowserContext(browser, logger, requestId) {
     }
 
 
-
     return Object.freeze({
         getContextById,
         runInstructions,
         getPageByContextId,
         createPageByContext,
         createBrowserContext,
-        // runInstructionsAfter2fa,
         runInstructionsActionRequired,
         closeBrowserContextById,
         getResponseByContextPage

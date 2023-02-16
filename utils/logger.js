@@ -1,7 +1,7 @@
-const {mongodbConfig} = require("../configs/appConfig");
 const winston = require('winston');
 require('winston-mongodb');
-
+const packageProject = require('../package.json');
+const cloudScrapyVersion = packageProject.version
 winston.addColors({ label: 'bold blueBG' });
 winston.addColors({ timestamp: 'magenta' });
 winston.addColors({ space: 'bold magentaBG' });
@@ -17,7 +17,7 @@ const logsNoColors = winston.format.printf(
 
 const alignColorsAndTime = logsFormats => winston.format.combine(
     winston.format.label({
-        label: `[CloudScrapy v0.0.1]-[LOGGER]`,
+        label: `[CloudScrapy v${cloudScrapyVersion}]-[LOGGER]`,
     }),
     winston.format.timestamp({
         format: `DD-MM-YYYY-HH:MM:SS`,
@@ -47,7 +47,7 @@ const logger = function (filename) {
                     useNewUrlParser: true,
                     useUnifiedTopology: true,
                     level: 'silly',
-                    db: mongodbConfig.uri,
+                    db: process.env.MONGODB_URI,
                     collection: 'logs_general',
                     format: winston.format.combine(alignColorsAndTime(logsColors))
                 }),
@@ -65,7 +65,7 @@ const logger = function (filename) {
                     useNewUrlParser: true,
                     useUnifiedTopology: true,
                     level: 'silly',
-                    db: mongodbConfig.uri,
+                    db: process.env.MONGODB_URI,
                     collection: 'logs_general',
                     format: winston.format.combine(alignColorsAndTime(logsColors))
                 }),

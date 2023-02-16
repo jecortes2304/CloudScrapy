@@ -1,8 +1,8 @@
 <img style="display: block; margin: auto; width: 100%" alt="Version" src="readme_docs/images/banner.png" />
 <p>
   <img alt="Version" src="https://img.shields.io/badge/version-0.0.1-blue.svg?cacheSeconds=2592000" />
-  <a href="https://github.com/jecortes2304/CloudScrapy/readme_docs/license.html" target="_blank">
-    <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-gren.svg" />
+  <a href="https://opensource.org/licenses/ISC" target="_blank">
+    <img alt="License: ISC" src="https://img.shields.io/badge/License-ISC-green.svg" />
   </a>
 </p>
 
@@ -40,8 +40,8 @@ IMAGES_PATH=./files/screenshots/
 LOGS_PATH=./files/logs/
 PDF_PATH=./files/pdfs/ 
 
-ANTICAPTCHA_API_KEY= YOUR_ANTICAPTCHA_API_KEY
-SECRET_TOKEN= YOUR_SECRET_TOKEN
+ANTICAPTCHA_API_KEY=YOUR_ANTICAPTCHA_API_KEY
+SECRET_TOKEN=YOUR_SECRET_TOKEN
 
 NODE_ENV=development
 ~~~
@@ -119,7 +119,7 @@ A full request execution json is divided by 4 jsons:
 
 ## 📝 License
 
-This project is [MIT](https://github.com/jecortes2304/CloudScrapy/readme_docs/license.html) licensed.
+This project is [ISC](https://opensource.org/licenses/ISC) licensed.
 
 ## Show your support
 

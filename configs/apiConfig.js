@@ -15,15 +15,18 @@ const apiConfig = {
                 email: "layusoelu@lucual18.es",
             },
         },
-        host: "localhost:3000",
-        schemes: ['http', 'https'],
-        consumes: ['application/json'],
-        produces: ['application/json'],
         servers: [
             {
-                url: `http://localhost:3000`
+                url: "http://localhost:3000/",
+                description: "dev server"
             },
+            {
+                url: "http://localhost:5000/",
+                description: "docker dev server"
+            }
         ],
+        consumes: ['application/json'],
+        produces: ['application/json'],
         securityDefinitions: {
             apiKeyAuth:{
                 type: "apiKey",
