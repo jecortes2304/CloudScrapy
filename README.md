@@ -1,6 +1,6 @@
 <img style="display: block; margin: auto; width: 100%" alt="Version" src="readme_docs/images/banner.png" />
 <p>
-  <img alt="Version" src="https://img.shields.io/badge/version-0.0.1-blue.svg?cacheSeconds=2592000" />
+  <img alt="Version" src="https://img.shields.io/badge/version-0.0.2-blue.svg?cacheSeconds=2592000" />
   <a href="https://opensource.org/licenses/ISC" target="_blank">
     <img alt="License: ISC" src="https://img.shields.io/badge/License-ISC-green.svg" />
   </a>
