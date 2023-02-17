@@ -682,12 +682,12 @@ function BotEngineBrowserContext(browser, logger, requestId) {
             case "click_and_wait":
                 try {
                     await Promise.all([
-                        page.click(params[0]),
-                        page.waitForNavigation(options)
+                        page.waitForNavigation({waitUntil: "networkidle0"}),
+                        page.click(params[0], options)
                     ]);
                     return true
                 } catch (error) {
-                    logger.error(`Error click_and_wait ${error}`)
+                    logger.error(`Error clickAndWait ${error}`)
                     return false
                 }
             case "wait_for_timeout":
@@ -708,11 +708,25 @@ function BotEngineBrowserContext(browser, logger, requestId) {
                 }
             case "wait_for_selector_and_click":
                 try {
-                    await page.waitForSelector(params[0], options)
-                    await page.click(params[0], options)
+                    await Promise.all([
+                        page.waitForSelector(params[0], options),
+                        page.click(params[0], options),
+                    ]);
                     return true
                 } catch (error) {
                     logger.error(`Error waitForSelectorAndClick ${error}`)
+                    return false
+                }
+            case "wait_selector_click_wait_nav":
+                try {
+                    await Promise.all([
+                        page.waitForSelector(params[0], options),
+                        page.waitForNavigation({waitUntil: "networkidle0"}),
+                        page.click(params[0], options)
+                    ]);
+                    return true
+                } catch (error) {
+                    logger.error(`Error waitForSelectorClickAndWaitNav ${error}`)
                     return false
                 }
             case "wait_for_xpath":

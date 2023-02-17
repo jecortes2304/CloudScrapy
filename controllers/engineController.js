@@ -51,7 +51,7 @@ function EngineController() {
                     }else {
                         logger.warn(`BrowserContext ${contextId} already closed or doesn't exist`)
                     }
-                }, 300000);
+                }, 150000);
             }
             else if (result['code'] === EXECUTION_SUCCESS.code || result['code'] === NO_EXECUTION.code) {
                 const extractRulesResponse = await botInstance.getResponseByContextPage(contextId, data)
@@ -104,7 +104,7 @@ function EngineController() {
                     }else {
                         logger.warn(`BrowserContext ${contextId} already closed or doesn't exist`)
                     }
-                }, 300000);
+                }, 150000);
             } else if (result['code'] === EXECUTION_SUCCESS.code ||
                 result['code'] === EXECUTION_FAILED.code ||
                 result['code'] === NO_EXECUTION.code) {
