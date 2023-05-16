@@ -1,10 +1,12 @@
 const Redis = require('ioredis');
 const logger = require('../utils/logger')("")
-const appConfig = require('../configs/appConfig')
+const config = require('config')
+const {host, port, password} = config.get('redis')
 
 const redisClient = new Redis({
-    host: appConfig.redisConfig.host,
-    port: appConfig.redisConfig.port
+    host: host,
+    port: port,
+    password: password
 });
 
 redisClient.on("connect", () => {

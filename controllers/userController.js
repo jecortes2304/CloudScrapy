@@ -1,158 +1,246 @@
 const jwt = require('jsonwebtoken');
 const Joi = require("@hapi/joi");
 const User = require("../models/userModel");
-const bcrypt = require("bcrypt");
-const {
-    REGISTER_OK,
-    USER_EXIST,
-    USER_NOT_FOUND,
-    WRONG_PASS,
-    UNAUTHORIZED,
-    TOKEN_INVALID,
-    LOGIN_OK,
-    UNKNOWN_AUTH_ERROR
-} = require('../utils/constants')
-
+const {LOGIN_REGISTER_ERRORS} = require('../utils/constants');
+const crypto = require("../utils/cryptoUtils");
+const config = require('config');
+const {SECRET_TOKEN} = config.get('tokens');
 
 function UserController() {
 
+    async function getAllUsers(req, res){
+        const users = await User.find({})
+        let userMap = [];
 
-    async function registerUser(req, res) {
-        // Validations
-        const {error} = schemaRegister.validate(req.body)
-
-        if (error) {
-            return res.status(400).json({
-                error: {
-                    code: 400,
-                    message: error.details[0].message
-                }
-            })
-        }
-
-        const isEmailExist = await User.findOne({email: req.body.email});
-        if (isEmailExist) {
-            return res.status(USER_EXIST.code).json({
-                error: {
-                    code: USER_EXIST.code,
-                    message: USER_EXIST.message
-                }
-            })
-        }
-
-        const salt = await bcrypt.genSalt(10);
-        const password = await bcrypt.hash(req.body.password, salt);
-
-        const user = new User({
-            name: req.body.name,
-            email: req.body.email,
-            password: password
+        users.forEach(function(user) {
+            userMap.push(user._id);
         });
-        try {
-            const savedUser = await user.save();
-            res.status(200).json({
-                message: REGISTER_OK.message,
-                code: REGISTER_OK.code,
-                data: savedUser
-            })
-        } catch (error) {
-            res.status(400).json({
-                error: {
-                    code: UNKNOWN_AUTH_ERROR.code,
-                    message: UNKNOWN_AUTH_ERROR.message,
-                    data: {error}
-                }
-            })
-        }
-    }
 
-    async function loginUser(req, res) {
-        // Validations
-        try {
-            const {error} = schemaLogin.validate(req.body);
-            if (error) return res.status(400).json({
-                error: {
-                    code: 400,
-                    message: error.details[0].message
-                }
-            })
-
-            const user = await User.findOne({email: req.body.email});
-            if (!user) return res.status(USER_NOT_FOUND.code).json({
-                error: {
-                    code: USER_NOT_FOUND.code,
-                    message: USER_NOT_FOUND.message
-                }
-            });
-
-            const validPassword = await bcrypt.compare(req.body.password, user.password);
-            if (!validPassword) return res.status(WRONG_PASS.code).json({
-                code: WRONG_PASS.code,
-                message: WRONG_PASS.message
-            })
-
-            // Creating Token
-            const token = jwt.sign({
-                name: user.name,
-                id: user._id
-            }, process.env.SECRET_TOKEN)
-
-            res.status(200).header('X-API-Key', token).json({
-                code: LOGIN_OK.code,
-                message: LOGIN_OK.message,
-                data: {token}
-            })
-        } catch (error) {
-            res.status(400).json({
-                error: {
-                    code: UNKNOWN_AUTH_ERROR.code,
-                    message: UNKNOWN_AUTH_ERROR.message,
-                    data: {error}
-                }
-            })
-        }
-
-
-    }
-
-    function verifyToken(req, res, next) {
-
-        const token = req.header('X-API-Key')
-        if (!token) return res.status(UNAUTHORIZED.code).json({
-            error: {
-                code: UNAUTHORIZED.code,
-                message: UNAUTHORIZED.message
-            }
+        return res.status(200).json({
+            code: LOGIN_REGISTER_ERRORS.OK_OPERATION.code,
+            message: LOGIN_REGISTER_ERRORS.OK_OPERATION.message,
+            data: {userMap}
         })
+    }
+
+    async function getUserById(req, res) {
         try {
-            req.user = jwt.verify(token, process.env.SECRET_TOKEN)
-            next()
+            const userId = req.params.userId
+            const user = await User.findOne({_id: userId});
+            if (!user) {
+                return res.status(404).json({
+                    error: {
+                        code: LOGIN_REGISTER_ERRORS.USER_NOT_FOUND.code,
+                        message: LOGIN_REGISTER_ERRORS.USER_NOT_FOUND.message
+                    }
+                })
+            } else {
+                return res.status(200).json({
+                    code: LOGIN_REGISTER_ERRORS.USER_FOUND_OK.code,
+                    message: LOGIN_REGISTER_ERRORS.USER_FOUND_OK.message,
+                    data: {user}
+                })
+            }
         } catch (error) {
-            res.status(TOKEN_INVALID.code).json({
+            return res.status(500).json({
                 error: {
-                    code: TOKEN_INVALID.code,
-                    message: TOKEN_INVALID.message
+                    code: LOGIN_REGISTER_ERRORS.INTERNAL_SERVER_ERROR.code,
+                    message: LOGIN_REGISTER_ERRORS.INTERNAL_SERVER_ERROR.message,
+                    error: error.toString()
                 }
             })
         }
     }
 
-    const schemaRegister = Joi.object({
+    async function getUserProfileInfo(req, res) {
+        try {
+            const token = getToken(req)
+            const userInfo = jwt.verify(token, SECRET_TOKEN)
+            const user = await User.findOne({_id: userInfo.id})
+            if (user) {
+                return res.status(200).json({
+                    code: LOGIN_REGISTER_ERRORS.OK_OPERATION.code,
+                    message: LOGIN_REGISTER_ERRORS.OK_OPERATION.message,
+                    data: {user}
+                })
+            }
+        } catch (error) {
+            return res.status(500).json({
+                error: {
+                    code: LOGIN_REGISTER_ERRORS.INTERNAL_SERVER_ERROR.code,
+                    message: LOGIN_REGISTER_ERRORS.INTERNAL_SERVER_ERROR.message,
+                    error: error.toString()
+                }
+            })
+        }
+    }
+
+    async function getUserByUsername(req, res) {
+        try {
+            const username = req.params.username
+            const user = await User.findOne({username: username});
+            if (!user) {
+                return res.status(404).json({
+                    error: {
+                        code: LOGIN_REGISTER_ERRORS.USER_NOT_FOUND.code,
+                        message: LOGIN_REGISTER_ERRORS.USER_NOT_FOUND.message
+                    }
+                })
+            } else {
+                return res.status(200).json({
+                    code: LOGIN_REGISTER_ERRORS.USER_FOUND_OK.code,
+                    message: LOGIN_REGISTER_ERRORS.USER_FOUND_OK.message,
+                    data: {user}
+                })
+            }
+        } catch (error) {
+            return res.status(500).json({
+                error: {
+                    code: LOGIN_REGISTER_ERRORS.INTERNAL_SERVER_ERROR.code,
+                    message: LOGIN_REGISTER_ERRORS.INTERNAL_SERVER_ERROR.message,
+                    error: error.toString()
+                }
+            })
+        }
+    }
+
+    async function deleteUserById(req, res) {
+        try {
+            const userId = req.params.userId
+            const user = await User.findOne({_id: userId});
+            if (!user) {
+                return res.status(404).json({
+                    error: {
+                        code: LOGIN_REGISTER_ERRORS.USER_NOT_FOUND.code,
+                        message: LOGIN_REGISTER_ERRORS.USER_NOT_FOUND.message
+                    }
+                })
+            } else {
+                if (user.username === 'root') {
+                    return res.status(403).json({
+                        code: LOGIN_REGISTER_ERRORS.ERROR_ROOT_DELETE.code,
+                        message: LOGIN_REGISTER_ERRORS.ERROR_ROOT_DELETE.message
+                    })
+                } else {
+                    await User.deleteOne({_id: userId});
+                    return res.status(200).json({
+                        code: LOGIN_REGISTER_ERRORS.DELETE_OK.code,
+                        message: LOGIN_REGISTER_ERRORS.DELETE_OK.message
+                    })
+                }
+            }
+        } catch (error) {
+            return res.status(500).json({
+                error: {
+                    code: LOGIN_REGISTER_ERRORS.INTERNAL_SERVER_ERROR.code,
+                    message: LOGIN_REGISTER_ERRORS.INTERNAL_SERVER_ERROR.message,
+                    error: error.toString()
+                }
+            })
+        }
+    }
+
+    async function updateUserById(req, res) {
+        try {
+            const {error} = schemaUpdater.validate(req.body)
+            if (error) {
+                return res.status(400).json({
+                    error: {
+                        code: 400,
+                        message: error.details[0].message
+                    }
+                })
+            }
+            const userId = req.params.userId
+            const userToUpdate = req.body
+            const userUpdated = await User.findByIdAndUpdate(userId, userToUpdate, {new: true});
+            if (!userUpdated) {
+                return res.status(404).json({
+                    error: {
+                        code: LOGIN_REGISTER_ERRORS.USER_NOT_FOUND.code,
+                        message: LOGIN_REGISTER_ERRORS.USER_NOT_FOUND.message
+                    }
+                })
+            }else {
+                const userToShow = {
+                    username: userUpdated.username,
+                    name: userUpdated.name,
+                    email: userUpdated.email,
+                    publicKey: userUpdated.keysPair.publicKey,
+                    role: userUpdated.role
+                }
+                return res.status(200).json({
+                        code: LOGIN_REGISTER_ERRORS.USER_UPDATED_OK.code,
+                        message: LOGIN_REGISTER_ERRORS.USER_UPDATED_OK.message,
+                        data: userToShow
+                })
+            }
+        } catch (error) {
+            return res.status(500).json({
+                error: {
+                    code: LOGIN_REGISTER_ERRORS.INTERNAL_SERVER_ERROR.code,
+                    message: LOGIN_REGISTER_ERRORS.INTERNAL_SERVER_ERROR.message,
+                    error: error.toString()
+                }
+            })
+        }
+    }
+
+    async function refreshKeysPairById(req, res) {
+        try {
+            const userId = req.params.userId
+            const {exportedPublicKeyBuffer, exportedPrivateKeyBuffer} = crypto.encryptDecrypt().generateKeysPair()
+            const keysPair = {
+                privateKey: exportedPrivateKeyBuffer,
+                publicKey: exportedPublicKeyBuffer
+            }
+            const userUpdated = await User.findByIdAndUpdate(userId, {keysPair}, {new: true});
+            if (!userUpdated) {
+                return res.status(404).json({
+                    error: {
+                        code: LOGIN_REGISTER_ERRORS.USER_NOT_FOUND.code,
+                        message: LOGIN_REGISTER_ERRORS.USER_NOT_FOUND.message
+                    }
+                })
+            } else {
+                return res.status(204).json({
+                    code: LOGIN_REGISTER_ERRORS.UPDATED_NO_CONTENT.code,
+                    message: LOGIN_REGISTER_ERRORS.UPDATED_NO_CONTENT.message
+                })
+            }
+        } catch (error) {
+            return res.status(500).json({
+                error: {
+                    code: LOGIN_REGISTER_ERRORS.INTERNAL_SERVER_ERROR.code,
+                    message: LOGIN_REGISTER_ERRORS.INTERNAL_SERVER_ERROR.message,
+                    error: error.toString()
+                }
+            })
+        }
+    }
+
+
+    const schemaUpdater = Joi.object({
         name: Joi.string().min(6).max(255).required(),
-        email: Joi.string().min(6).max(255).required().email(),
-        password: Joi.string().min(6).max(1024).required()
+        password: Joi.string().min(6).max(1024).required(),
+        role: Joi.string().min(4).max(20)
     })
 
-    const schemaLogin = Joi.object({
-        email: Joi.string().min(6).max(255).required().email(),
-        password: Joi.string().min(6).max(1024).required()
-    })
+
+    function getToken(req) {
+        return req.header('X-API-Key')
+    }
+
 
 
     return Object.freeze({
-        registerUser,
-        loginUser,
-        verifyToken
+        getUserById,
+        getAllUsers,
+        getUserProfileInfo,
+        getUserByUsername,
+        deleteUserById,
+        updateUserById,
+        refreshKeysPairById
     })
 }
 

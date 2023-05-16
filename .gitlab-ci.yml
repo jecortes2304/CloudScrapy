@@ -1,0 +1,28 @@
+stages:
+  - DEPLOY_PRE
+  - DEPLOY_PRO
+  
+DEPLOY_PRE:
+  stage: DEPLOY_PRE
+  trigger:
+    include: config_deploy/pre/.gitlab-ci.yml
+  only:
+    - /^rc-.*$/
+    #- /^.*$/
+    - /^fix\/.*$/
+    - develop
+    - /^feature\/.*$/
+    - master
+  when: manual
+
+
+DEPLOY_PRO:
+  stage: DEPLOY_PRO
+  trigger:
+    include: config_deploy/pro/.gitlab-ci.yml
+  only:
+    #- /^.*$/
+    - /^fix\/.*$/
+    - master
+  when: manual
+

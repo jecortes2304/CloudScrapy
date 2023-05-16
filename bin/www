@@ -7,12 +7,14 @@
 const app = require('../app');
 const debug = require('debug')('cloud-scrapy:server');
 const http = require('http');
+const config = require('config')
+const {server_port} = config.get('server')
 
 /**
  * Get port from environment and store in Express.
  */
 
-const port = normalizePort(process.env.APP_PORT || '3000');
+const port = normalizePort(server_port || '4000');
 app.set('port', port);
 
 /**

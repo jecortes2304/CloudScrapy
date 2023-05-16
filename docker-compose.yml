@@ -1,46 +1,58 @@
-version: '3'
-services:
-  mongo_db:
-    container_name: mongo_db_container
-    restart: unless-stopped
-    image: 'mongo:6.0'
-    network_mode: bridge
-    ports:
-      - '27017'
-  redis:
-    container_name: redis_container
-    network_mode: bridge
-    restart: unless-stopped
-    image: redis:7.0.7-alpine
-    expose:
-      - '6379'
-  app:
-    container_name: cloud_scrapy_container
-    restart: unless-stopped
-    network_mode: bridge
-    expose:
-      - '5000'
-    ports:
-      - '5000:5000'
-    build: .
-    environment:
-      MONGODB_URI: mongodb://mongo_db_container:27017/cloud_scrapy
-      REDIS_HOST: redis_container
-      REDIS_PORT: 6379
-      IMAGES_PATH: ./files/screenshots/
-      LOGS_PATH: ./files/logs/
-      PDF_PATH: ./files/pdfs/
-      APP_HOST: http://localhost
-      APP_PORT: 5000
-      ANTICAPTCHA_API_KEY: YOUR_ANTICAPTCHA_API_KEY
-      SECRET_TOKEN: YOUR_SECRET_TOKEN
-      NODE_ENV: development
-    volumes:
-      - .:/src
-      - /src/node_modules
-    depends_on:
-      - mongo_db
-      - redis
-    links:
-      - mongo_db
-      - redis
+version: '3.3'
+services:    
+    cloud-scrapy:
+      image: ${IMAGE_APP}:${IMAGE_TAG}
+      networks:
+        - traefik-swarm
+        - databases-swarm
+      depends_on:
+        - db
+        - redis_condor
+      volumes:
+        - screenshots_scrapy:/files/screenshots
+        - logs_scrapy:/files/logs/
+        - pdfs_scrapy:/files/pdfs/ 
+      environment:
+         - NODE_ENV=${NODE_ENV}
+      deploy:
+        labels:
+        - "traefik.http.routers.${NAME_SERVICE_TRAEFIK}.rule=Host(`${URL_DEPLOY}`)"
+        - "traefik.http.routers.${NAME_SERVICE_TRAEFIK}.entrypoints=https"
+        - "traefik.http.services.${NAME_SERVICE_TRAEFIK}.loadbalancer.server.port=5000"
+        - "traefik.http.routers.${NAME_SERVICE_TRAEFIK}.tls=true"
+        - "traefik.docker.network=traefik-swarm"
+        - "traefik.enable=true"
+        placement:
+          constraints:
+            - "node.role == worker"
+            - 'node.hostname!=invoicy-v2-clouding-pre-worker-03'
+         
+volumes:
+  screenshots_scrapy:
+    external: true
+  logs_scrapy:
+    external: true
+  pdfs_scrapy:
+    external: true
+
+networks:
+  traefik-swarm:
+    external: true
+  databases-swarm:
+    external: true
+      
+
+  #mongo_db:
+  # container_name: mongo_db_container
+  #  restart: unless-stopped
+  #  image: 'mongo:6.0'
+  #  network_mode: bridge
+  #  ports:
+  #    - '27017'
+  #redis:
+  #  container_name: redis_container
+  #  network_mode: bridge
+  #  restart: unless-stopped
+  #  image: redis:7.0.7-alpine
+  #  expose:
+  #    - '6379'

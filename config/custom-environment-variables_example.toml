@@ -1,0 +1,37 @@
+title = "Custom env Configuration"
+
+[DEFAULT]
+    organization_domain = 'invoicy.es'
+    cloud_scrapy_server = 'SERVER_HOST'
+[executions]
+    max_executions_allowed = 100
+[server]
+    server_url = 'SERVER_URL'
+    server_host = 'SERVER_HOST'
+    server_port = 'SERVER_PORT'
+    server_name = 'cloud-scrapy-prod'
+    server_environment = 'PROD'
+[mongodb]
+    host = 'MONGODB_HOST'
+    port = 'MONGODB_PORT'
+    username = 'MONGODB_USER'
+    password = 'MONGODB_PASS'
+    database = 'MONGODB_DB'
+    mongodb_uri = 'mongodb://%username:%password@%host:%port/%database'
+[redis]
+    host = 'REDIS_HOST'
+    port = 'REDIS_PORT'
+    username = ''
+    password = 'REDIS_PASS'
+[paths]
+    images_path = './files/screenshots/'
+    logs_path = './files/logs/'
+    pdf_path = './files/pdfs/'
+[root_user]
+    username = 'root'
+    email = 'root_cloud_scrapy@lucual18.es'
+    name = 'root'
+    password = '$2b$10$ui30FT3Qpk.PAM0XKxFmruT.Spjbb.38gVLEXPFmmHFdfrblTjSDO'
+[tokens]
+    ANTICAPTCHA_API_KEY = "ANTICAPTCHA_API_KEY"
+    SECRET_TOKEN = "SECRET_TOKEN"

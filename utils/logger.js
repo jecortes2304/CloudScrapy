@@ -2,6 +2,11 @@ const winston = require('winston');
 require('winston-mongodb');
 const packageProject = require('../package.json');
 const cloudScrapyVersion = packageProject.version
+const config = require('config')
+const mongoUri = config.get('mongodb.mongodb_uri')
+const logsPath = config.get('paths.logs_path')
+
+
 winston.addColors({ label: 'bold blueBG' });
 winston.addColors({ timestamp: 'magenta' });
 winston.addColors({ space: 'bold magentaBG' });
@@ -28,7 +33,7 @@ const alignColorsAndTime = logsFormats => winston.format.combine(
 
 const fileNameTransport = filename => new winston.transports.File({
     level: 'silly',
-    filename: `${process.env.LOGS_PATH}/${filename}.log`,
+    filename: `${logsPath}${filename}.log`,
     format: winston.format.combine(winston.format.json(), alignColorsAndTime(logsNoColors)),
 });
 
@@ -43,11 +48,13 @@ const logger = function (filename) {
                 }),
                 fileNameTransport(filename),
                 new (winston.transports.MongoDB)({
+                    options: {
+                        useNewUrlParser: true,
+                        useUnifiedTopology: true,
+                    },
                     autoReconnect: true,
-                    useNewUrlParser: true,
-                    useUnifiedTopology: true,
                     level: 'silly',
-                    db: process.env.MONGODB_URI,
+                    db: mongoUri,
                     collection: 'logs_general',
                     format: winston.format.combine(alignColorsAndTime(logsColors))
                 }),
@@ -62,10 +69,12 @@ const logger = function (filename) {
                 }),
                 new (winston.transports.MongoDB)({
                     autoReconnect: true,
-                    useNewUrlParser: true,
-                    useUnifiedTopology: true,
+                    options: {
+                        useNewUrlParser: true,
+                        useUnifiedTopology: true,
+                    },
                     level: 'silly',
-                    db: process.env.MONGODB_URI,
+                    db: mongoUri,
                     collection: 'logs_general',
                     format: winston.format.combine(alignColorsAndTime(logsColors))
                 }),

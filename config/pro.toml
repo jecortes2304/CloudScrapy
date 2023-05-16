@@ -1,0 +1,38 @@
+title = "Config Pro"
+
+[DEFAULT]
+    organization_domain = 'invoicy.es'
+    cloud_scrapy_server = 'https://cloud-scrapy.invoicy.es'
+[limits]
+    browsers_contexts_allowed = 50
+    time_seconds_expires = 86400
+[server]
+    server_url = 'https://cloud-scrapy.invoicy.es'
+    server_host = '0.0.0.0'
+    server_port = 5000
+    server_name = 'cloud-scrapy'
+    server_environment = 'PRO'
+[mongodb]
+    host = 'mongo_db'
+    port = 27017
+    username = 'cloud_scrapy'
+    password = 'G+et3*V4Am9dSn99Y'
+    database = 'cloud_scrapy'
+    mongodb_uri = 'mongodb://cloud_scrapy:G+et3*V4Am9dSn99Y@mongo_db:27017/cloud_scrapy'
+[redis]
+    host = 'redis_condor'
+    port = 6379
+    username = ''
+    password = 'R9W7uxZu65WXZWcekqWF'
+[paths]
+    images_path = './files/screenshots/'
+    logs_path = './files/logs/'
+    pdf_path = './files/pdfs/'
+[root_user]
+    username = 'root'
+    email = 'root_cloud_scrapy@lucual18.es'
+    name = 'root'
+    password = '$2b$10$ui30FT3Qpk.PAM0XKxFmruT.Spjbb.38gVLEXPFmmHFdfrblTjSDO'
+[tokens]
+    ANTICAPTCHA_API_KEY = "c77bf34c0f92dbf06b2a6ffae507d47d"
+    SECRET_TOKEN = "57656c6c636f6d6520746f207363726170652074686520636c6f756473"

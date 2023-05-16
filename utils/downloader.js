@@ -52,4 +52,4 @@ async function downloadBySelectors(selectorsArray, filesDir, page) {
 
 }
 
-module.exports = {downloadByRequest, downloadBySelectors}
+module.exports = {}

@@ -1,0 +1,2796 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Cloud Scrapy API",
+    "version": "1.0.0",
+    "description": "API to interact with headless browser engine bot on the cloud to scrape data",
+    "license": {
+      "name": "MIT",
+      "url": "https://spdx.org/licenses/MIT.html"
+    },
+    "contact": {
+      "name": "Lucual18",
+      "url": "https://www.lucual18.com",
+      "email": "layusoelu@lucual18.es"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:3000",
+      "description": "DEV SERVER"
+    }
+  ],
+  "paths": {
+    "/api/v1/auth/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "description": "Endpoint to sign up",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterOk"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterOk"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInternalServer"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInternalServer"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterUser"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterUser"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "description": "Endpoint to sign in and get token",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginOk"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginOk"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInternalServer"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInternalServer"
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginUser"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginUser"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/refresh-keys-pair/{userId}": {
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Endpoint to refresh the keys pair of user to encrypt sensitive data in request",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInternalServer"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInternalServer"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/users/get-user-by-id/{userId}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Endpoint to get user by id",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserByParamResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserByParamResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInternalServer"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInternalServer"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/users/get-user-profile-info": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Endpoint to get the logged user profile info",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserByParamResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserByParamResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInternalServer"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInternalServer"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/users/get-user-by-username/{username}": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Endpoint to get user by username",
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Username"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserByParamResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserByParamResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInternalServer"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInternalServer"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/users/all-users": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Endpoint to get all users",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsersByParamResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsersByParamResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/users/delete-user/{userId}": {
+      "delete": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Endpoint to delete user by id",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDeletedResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDeletedResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInternalServer"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInternalServer"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/users/update-user/{userId}": {
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "description": "Endpoint to update user by id",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "User ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateUserResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateUserResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInternalServer"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInternalServer"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUser"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUser"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/executions/execute": {
+      "post": {
+        "tags": [
+          "Executions"
+        ],
+        "description": "Execute a set of instructions in a new browserContext of the user",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToManyRequests"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToManyRequests"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionResponseError"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionResponseError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Execution"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/Execution"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/executions/solve-action-required": {
+      "post": {
+        "tags": [
+          "Executions"
+        ],
+        "description": "Execute a set of instructions to solve action require in a browserContext by browserContext id",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionResponseError"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionResponseError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActionRequiredExecution"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/ActionRequiredExecution"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/executions/close-context/{contextId}": {
+      "delete": {
+        "tags": [
+          "Executions"
+        ],
+        "description": "Force browserContext to close and deleted if exist",
+        "parameters": [
+          {
+            "name": "contextId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Context ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionCloseResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionCloseResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionResponseError"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionResponseError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/executions/all-browser-contexts": {
+      "get": {
+        "tags": [
+          "Executions"
+        ],
+        "description": "Get all active browser contexts",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllBrowserContextsResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllBrowserContextsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInternalServer"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInternalServer"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/executions/user-browser-contexts/{userId}": {
+      "get": {
+        "tags": [
+          "Executions"
+        ],
+        "description": "Get all active browser contexts by user id",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllBrowserContextsResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/AllBrowserContextsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInternalServer"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorInternalServer"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/utils/htmlToPdf_by_content": {
+      "post": {
+        "tags": [
+          "Utils"
+        ],
+        "description": "Convert html to pdf by sending a text html",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HtmlTpPdfByContentResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/HtmlTpPdfByContentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToManyRequests"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ToManyRequests"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionResponseError"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionResponseError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HtmlToPdfByContent"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/HtmlToPdfByContent"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/files/screenshots/{screenshotName}": {
+      "get": {
+        "tags": [
+          "Files"
+        ],
+        "description": "Download an image file passing the exact name",
+        "parameters": [
+          {
+            "name": "screenshotName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Screenshot Name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": [
+              "application/jpg"
+            ]
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileNotFound"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileNotFound"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/files/logs/{logName}": {
+      "get": {
+        "tags": [
+          "Files"
+        ],
+        "description": "Download a log file passing the exact name",
+        "parameters": [
+          {
+            "name": "logName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Log Name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": [
+              "text/plain"
+            ]
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileNotFound"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileNotFound"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/files/pdfs/{pdfName}": {
+      "get": {
+        "tags": [
+          "Files"
+        ],
+        "description": "Download a pdf file passing the exact name",
+        "parameters": [
+          {
+            "name": "pdfName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Pdf Name"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": [
+              "text/plain"
+            ]
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileNotFound"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileNotFound"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/files/log-info/{logRequestId}": {
+      "get": {
+        "tags": [
+          "Files"
+        ],
+        "description": "Show a json object with meta-info of the log from preview executions",
+        "parameters": [
+          {
+            "name": "logRequestId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Log Request ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogInfoResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogInfoResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileNotFound"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionResponseError"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionResponseError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/files/screenshot-info/{screenshotRequestId}": {
+      "get": {
+        "tags": [
+          "Files"
+        ],
+        "description": "Show a json object with meta-info of the screenshot from preview executions",
+        "parameters": [
+          {
+            "name": "screenshotRequestId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Screenshot Request ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScreenshotInfoResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScreenshotInfoResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileNotFound"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionResponseError"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionResponseError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
+    },
+    "/api/v1/files/pdf-info/{pdfRequestId}": {
+      "get": {
+        "tags": [
+          "Files"
+        ],
+        "description": "Show a json object with meta-info of the pdf from preview executions",
+        "parameters": [
+          {
+            "name": "pdfRequestId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Pdf Request ID."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PdfInfoResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/PdfInfoResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorLogin"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileNotFound"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileNotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionResponseError"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionResponseError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "apiKeyAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LoginUser": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "string"
+          },
+          "password": {
+            "type": "string",
+            "example": "string"
+          }
+        },
+        "xml": {
+          "name": "LoginUser"
+        }
+      },
+      "RegisterUser": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "example": "string"
+          },
+          "name": {
+            "type": "string",
+            "example": "string"
+          },
+          "email": {
+            "type": "string",
+            "example": "string"
+          },
+          "password": {
+            "type": "string",
+            "example": "string"
+          },
+          "role": {
+            "type": "string",
+            "example": "string"
+          }
+        },
+        "xml": {
+          "name": "RegisterUser"
+        }
+      },
+      "LoginOk": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "User logged successfully"
+          },
+          "token": {
+            "type": "string",
+            "example": "string"
+          }
+        },
+        "xml": {
+          "name": "LoginOk"
+        }
+      },
+      "RegisterOk": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "User registered successfully"
+          },
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "username": {
+                "type": "string",
+                "example": "string"
+              },
+              "name": {
+                "type": "string",
+                "example": "string"
+              },
+              "email": {
+                "type": "string",
+                "example": "string"
+              },
+              "publicKey": {
+                "type": "string",
+                "example": "string"
+              },
+              "role": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "RegisterOk"
+        }
+      },
+      "ErrorLogin": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "number",
+                "example": 401
+              },
+              "message": {
+                "type": "string",
+                "example": "The token is invalid"
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "ErrorLogin"
+        }
+      },
+      "ErrorForbidden": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "number",
+                "example": 403
+              },
+              "message": {
+                "type": "string",
+                "example": "Resource forbidden:"
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "ErrorForbidden"
+        }
+      },
+      "Execution": {
+        "type": "object",
+        "properties": {
+          "request_description": {
+            "type": "string",
+            "example": "string"
+          },
+          "send_in_request": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string",
+                "example": "string"
+              },
+              "options": {
+                "type": "object",
+                "properties": {
+                  "waitUntil": {
+                    "type": "string",
+                    "example": "string"
+                  }
+                }
+              },
+              "instructions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "command": {
+                      "type": "string",
+                      "example": "type"
+                    },
+                    "params": {
+                      "type": "array",
+                      "example": [
+                        "string",
+                        "string"
+                      ],
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "options": {
+                      "type": "object",
+                      "properties": {
+                        "delay": {
+                          "type": "number",
+                          "example": 10
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "get_in_response": {
+            "type": "object",
+            "properties": {
+              "cookies": {
+                "type": "boolean",
+                "example": true
+              },
+              "headers": {
+                "type": "boolean",
+                "example": true
+              },
+              "html_to_pdf": {
+                "type": "boolean",
+                "example": true
+              },
+              "logs": {
+                "type": "object",
+                "properties": {
+                  "active": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "full_logs": {
+                    "type": "boolean",
+                    "example": false
+                  }
+                }
+              },
+              "screenshot": {
+                "type": "object",
+                "properties": {
+                  "active": {
+                    "type": "boolean",
+                    "example": true
+                  },
+                  "full_page": {
+                    "type": "boolean",
+                    "example": false
+                  }
+                }
+              },
+              "source_page": {
+                "type": "boolean",
+                "example": true
+              },
+              "extract_rules": {
+                "type": "boolean",
+                "example": true
+              }
+            }
+          },
+          "request_config": {
+            "type": "object",
+            "properties": {
+              "block_resources": {
+                "type": "array",
+                "example": [
+                  "string"
+                ],
+                "items": {
+                  "type": "string"
+                }
+              },
+              "headers": {
+                "type": "string",
+                "example": "string"
+              },
+              "cookies": {
+                "type": "string",
+                "example": "string"
+              },
+              "captcha": {
+                "type": "boolean",
+                "example": true
+              },
+              "geolocation": {
+                "type": "object",
+                "properties": {
+                  "latitude": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "longitude": {
+                    "type": "string",
+                    "example": "string"
+                  }
+                }
+              },
+              "user_agent": {
+                "type": "string",
+                "example": "string"
+              },
+              "view_port": {
+                "type": "object",
+                "properties": {
+                  "width": {
+                    "type": "string",
+                    "example": "string"
+                  },
+                  "height": {
+                    "type": "string",
+                    "example": "string"
+                  }
+                }
+              },
+              "custom_proxy": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "Execution"
+        }
+      },
+      "ActionRequiredExecution": {
+        "type": "object",
+        "properties": {
+          "context_id": {
+            "type": "string",
+            "example": "string"
+          },
+          "request_id": {
+            "type": "string",
+            "example": "string"
+          },
+          "request_description": {
+            "type": "string",
+            "example": "string"
+          },
+          "send_in_request": {
+            "type": "object",
+            "properties": {
+              "url": {
+                "type": "string",
+                "example": "string"
+              },
+              "options": {
+                "type": "object",
+                "properties": {
+                  "waitUntil": {
+                    "type": "string",
+                    "example": "string"
+                  }
+                }
+              },
+              "instructions": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "command": {
+                      "type": "string",
+                      "example": "type"
+                    },
+                    "params": {
+                      "type": "array",
+                      "example": [
+                        "string",
+                        "string"
+                      ],
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "options": {
+                      "type": "object",
+                      "properties": {
+                        "delay": {
+                          "type": "number",
+                          "example": 10
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "ActionRequiredExecution"
+        }
+      },
+      "ExecutionResponse": {
+        "type": "object",
+        "properties": {
+          "hostname": {
+            "type": "string",
+            "example": "string"
+          },
+          "requestId": {
+            "type": "string",
+            "example": "string"
+          },
+          "contextId": {
+            "type": "string",
+            "example": "string"
+          },
+          "instructionsMessage": {
+            "type": "string",
+            "example": "string"
+          },
+          "instructionsCode": {
+            "type": "string",
+            "example": "string"
+          },
+          "executionResult": {
+            "type": "object",
+            "properties": {
+              "cookies": {
+                "type": "array",
+                "example": [],
+                "items": {}
+              },
+              "headers": {
+                "type": "object",
+                "properties": {}
+              },
+              "screenshot": {
+                "type": "string",
+                "example": "string"
+              },
+              "htmlToPdf": {
+                "type": "string",
+                "example": "string"
+              },
+              "logs": {
+                "type": "string",
+                "example": "string"
+              },
+              "sourcePage": {
+                "type": "string",
+                "example": "string"
+              },
+              "extractRules": {
+                "type": "object",
+                "properties": {}
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "ExecutionResponse"
+        }
+      },
+      "ExecutionResponseError": {
+        "type": "object",
+        "properties": {
+          "hostname": {
+            "type": "string",
+            "example": "string"
+          },
+          "requestId": {
+            "type": "string",
+            "example": "string"
+          },
+          "code": {
+            "type": "number",
+            "example": 500
+          },
+          "message": {
+            "type": "string",
+            "example": "string"
+          },
+          "error": {
+            "type": "string",
+            "example": "string"
+          }
+        },
+        "xml": {
+          "name": "ExecutionResponseError"
+        }
+      },
+      "ExecutionCloseResponse": {
+        "type": "object",
+        "properties": {
+          "hostname": {
+            "type": "string",
+            "example": "string"
+          },
+          "contextId": {
+            "type": "string",
+            "example": "string"
+          },
+          "requestId": {
+            "type": "string",
+            "example": "string"
+          },
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "string"
+          }
+        },
+        "xml": {
+          "name": "ExecutionCloseResponse"
+        }
+      },
+      "AllBrowserContextsResponse": {
+        "type": "object",
+        "properties": {
+          "hostname": {
+            "type": "string",
+            "example": "string"
+          },
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "string"
+          },
+          "result": {
+            "type": "object",
+            "properties": {
+              "total": {
+                "type": "number",
+                "example": 1
+              },
+              "browserContexts": {
+                "type": "array",
+                "example": [],
+                "items": {}
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "AllBrowserContextsResponse"
+        }
+      },
+      "UpdateUser": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "string"
+          },
+          "password": {
+            "type": "string",
+            "example": "string"
+          },
+          "role": {
+            "type": "string",
+            "example": "string"
+          }
+        },
+        "xml": {
+          "name": "UpdateUser"
+        }
+      },
+      "UpdateUserResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "User successfully updated"
+          },
+          "data": {
+            "type": "object",
+            "properties": {
+              "username": {
+                "type": "string",
+                "example": "string"
+              },
+              "name": {
+                "type": "string",
+                "example": "string"
+              },
+              "email": {
+                "type": "string",
+                "example": "string"
+              },
+              "publicKey": {
+                "type": "string",
+                "example": "string"
+              },
+              "role": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "UpdateUserResponse"
+        }
+      },
+      "UserByParamResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "Operation correctly executed"
+          },
+          "data": {
+            "type": "object",
+            "properties": {}
+          }
+        },
+        "xml": {
+          "name": "UserByParamResponse"
+        }
+      },
+      "UsersByParamResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "Operation correctly executed"
+          },
+          "data": {
+            "type": "array",
+            "example": [
+              "string"
+            ],
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "xml": {
+          "name": "UsersByParamResponse"
+        }
+      },
+      "UserDeletedResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "User successfully deleted"
+          }
+        },
+        "xml": {
+          "name": "UserDeletedResponse"
+        }
+      },
+      "LogInfoResponse": {
+        "type": "object",
+        "properties": {
+          "hostname": {
+            "type": "string",
+            "example": "string"
+          },
+          "message": {
+            "type": "string",
+            "example": "string"
+          },
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "log": {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "type": "string",
+                "example": "string"
+              },
+              "idContext": {
+                "type": "string",
+                "example": "string"
+              },
+              "idRequest": {
+                "type": "string",
+                "example": "string"
+              },
+              "logUrl": {
+                "type": "string",
+                "example": "string"
+              },
+              "expireAt": {
+                "type": "string",
+                "example": "string"
+              },
+              "createdAt": {
+                "type": "string",
+                "example": "string"
+              },
+              "updatedAt": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "LogInfoResponse"
+        }
+      },
+      "PdfInfoResponse": {
+        "type": "object",
+        "properties": {
+          "hostname": {
+            "type": "string",
+            "example": "string"
+          },
+          "message": {
+            "type": "string",
+            "example": "string"
+          },
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "pdf": {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "type": "string",
+                "example": "string"
+              },
+              "idContext": {
+                "type": "string",
+                "example": "string"
+              },
+              "idRequest": {
+                "type": "string",
+                "example": "string"
+              },
+              "urlPage": {
+                "type": "string",
+                "example": "string"
+              },
+              "pdfUrl": {
+                "type": "string",
+                "example": "string"
+              },
+              "error": {
+                "type": "string",
+                "example": "string"
+              },
+              "expireAt": {
+                "type": "string",
+                "example": "string"
+              },
+              "createdAt": {
+                "type": "string",
+                "example": "string"
+              },
+              "updatedAt": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "PdfInfoResponse"
+        }
+      },
+      "ScreenshotInfoResponse": {
+        "type": "object",
+        "properties": {
+          "hostname": {
+            "type": "string",
+            "example": "string"
+          },
+          "message": {
+            "type": "string",
+            "example": "string"
+          },
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "screenshot": {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "type": "string",
+                "example": "string"
+              },
+              "idContext": {
+                "type": "string",
+                "example": "string"
+              },
+              "idRequest": {
+                "type": "string",
+                "example": "string"
+              },
+              "urlPage": {
+                "type": "string",
+                "example": "string"
+              },
+              "imageUrl": {
+                "type": "string",
+                "example": "string"
+              },
+              "error": {
+                "type": "string",
+                "example": "string"
+              },
+              "expireAt": {
+                "type": "string",
+                "example": "string"
+              },
+              "createdAt": {
+                "type": "string",
+                "example": "string"
+              },
+              "updatedAt": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "ScreenshotInfoResponse"
+        }
+      },
+      "FileNotFound": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 404
+          },
+          "message": {
+            "type": "string",
+            "example": "string"
+          }
+        },
+        "xml": {
+          "name": "FileNotFound"
+        }
+      },
+      "HtmlToPdfByContent": {
+        "type": "object",
+        "properties": {
+          "request_description": {
+            "type": "string",
+            "example": "string"
+          },
+          "html_content": {
+            "type": "string",
+            "example": "string"
+          },
+          "output_format": {
+            "type": "string",
+            "example": "string"
+          },
+          "next": {
+            "type": "boolean",
+            "example": false
+          }
+        },
+        "xml": {
+          "name": "HtmlToPdfByContent"
+        }
+      },
+      "HtmlTpPdfByContentResponse": {
+        "type": "object",
+        "properties": {
+          "hostname": {
+            "type": "string",
+            "example": "string"
+          },
+          "code": {
+            "type": "number",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "string"
+          },
+          "requestId": {
+            "type": "string",
+            "example": "string"
+          },
+          "contextId": {
+            "type": "string",
+            "example": "string"
+          },
+          "result": {
+            "type": "string",
+            "example": "string"
+          }
+        },
+        "xml": {
+          "name": "HtmlTpPdfByContentResponse"
+        }
+      },
+      "ErrorNotFound": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "number",
+                "example": 404
+              },
+              "message": {
+                "type": "string",
+                "example": "Resource not found"
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "ErrorNotFound"
+        }
+      },
+      "ErrorBadRequest": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "number",
+                "example": 400
+              },
+              "message": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "ErrorBadRequest"
+        }
+      },
+      "ErrorInternalServer": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "number",
+                "example": 500
+              },
+              "message": {
+                "type": "string",
+                "example": "Internal server error"
+              },
+              "error": {
+                "type": "string",
+                "example": "string"
+              }
+            }
+          }
+        },
+        "xml": {
+          "name": "ErrorInternalServer"
+        }
+      },
+      "ToManyRequests": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "number",
+            "example": 429
+          },
+          "message": {
+            "type": "string",
+            "example": "string"
+          }
+        },
+        "xml": {
+          "name": "ToManyRequests"
+        }
+      }
+    },
+    "securitySchemes": {
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key",
+        "description": "Cloud Scrapy key to authenticate"
+      }
+    }
+  },
+  "apis": [
+    "./routes/*.js"
+  ]
+}

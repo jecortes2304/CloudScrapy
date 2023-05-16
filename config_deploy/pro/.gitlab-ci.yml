@@ -1,0 +1,86 @@
+variables:
+  IMAGE_APP: "registry.gitlab.com/lucual18/cloud-scrapy/cloud-scrapy"
+  IMAGE_TAG: "PRO"
+  NAME_STACK: "cloud-scrapy"
+  URL_DEPLOY: "cloud-scrapy.invoicy.es"
+  NODE_ENV: "pro"
+  NAME_SERVICE_TRAEFIK: "cloud-scrapy"
+
+
+stages:
+  - BUILD_PRO
+  - SIV2CPOM01
+  - UIV2CPOW01
+  - UIV2CPOW02
+  - DIV2CPOM01
+
+
+# ____  ____  ____     ____  ____  _____  ____  __  __  ___  ___  ____  _____  _  _
+#(  _ \(  _ \( ___)___(  _ \(  _ \(  _  )(  _ \(  )(  )/ __)/ __)(_  _)(  _  )( \( )
+# )___/ )   / )__)(___))___/ )   / )(_)(  )(_) ))(__)(( (__( (__  _)(_  )(_)(  )  (
+#(__)  (_)\_)(____)   (__)  (_)\_)(_____)(____/(______)\___)\___)(____)(_____)(_)\_)
+
+BUILD_PRO: # Acronimo: Build produccion
+  tags:
+    - invoicy-main-runner-shell
+  stage: BUILD_PRO
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker build -t $IMAGE_APP:$IMAGE_TAG .
+    - docker push $IMAGE_APP:$IMAGE_TAG
+    - docker image rm -f $IMAGE_APP:$IMAGE_TAG
+  #when: manual
+
+SIV2CPOM01:
+  tags:
+    - invoicy-v2-clouding-pro-manager-01
+  stage: SIV2CPOM01
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker stack rm $NAME_STACK
+    - sleep 20
+  needs: [BUILD_PRO]
+  #when: manual
+  
+UIV2CPOW01:
+  before_script:
+    - export IMAGE_APP=${IMAGE_APP}
+    - export IMAGE_TAG=${IMAGE_TAG}
+    - export NODE_ENV=${NODE_ENV}
+  tags:
+    - invoicy-v2-clouding-pro-worker-01
+  stage: UIV2CPOW01
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker rmi $(docker images | grep "$IMAGE_APP" | awk '{print $3}')
+    - docker pull $IMAGE_APP:$IMAGE_TAG
+  needs: [SIV2CPOM01]
+
+UIV2CPOW02:
+  before_script:
+    - export IMAGE_APP=${IMAGE_APP}
+    - export IMAGE_TAG=${IMAGE_TAG}
+    - export NODE_ENV=${NODE_ENV}
+  tags:
+    - invoicy-v2-clouding-pro-worker-02
+  stage: UIV2CPOW02
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker rmi $(docker images | grep "$IMAGE_APP" | awk '{print $3}')
+    - docker pull $IMAGE_APP:$IMAGE_TAG
+  needs: [SIV2CPOM01]
+
+DIV2CPOM01:
+  before_script:
+    - export IMAGE_APP=${IMAGE_APP}
+    - export NAME_STACK=${NAME_STACK}
+    - export IMAGE_TAG=${IMAGE_TAG}
+    - export NODE_ENV=${NODE_ENV}
+    - export NAME_SERVICE_TRAEFIK=${NAME_SERVICE_TRAEFIK}
+  tags:
+    - invoicy-v2-clouding-pro-manager-01
+  stage: DIV2CPOM01
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker stack deploy --compose-file docker-compose.yml $NAME_STACK
+  needs: ["UIV2CPOW01","UIV2CPOW02"]
