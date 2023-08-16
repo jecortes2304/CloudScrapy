@@ -17,10 +17,7 @@ const engineConfig = {
             '--mute-audio',
         ],
         devtools: false,
-        defaultViewport: {
-            width: 1366,
-            height: 768
-        },
+        defaultViewport: null,
         args: [
             '--start-maximized',
             '--disable-background-networking',
@@ -61,7 +58,6 @@ const engineConfig = {
             '--disable-gl-drawing-for-tests',
             '--enable-low-end-device-mode',
             '--disable-gpu',
-            '--incognito',
             '--disable-extensions',
             '--disable-dev-tools',
             '--ignore-certificate-errors',

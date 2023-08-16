@@ -32,7 +32,7 @@ exports.AUTH_RESPONSES_DEFINITIONS = {
     ErrorLogin: {
         error: {
             code: 401,
-            message: "The token is invalid"
+            message: "string"
         }
     },
     ErrorForbidden: {
@@ -85,7 +85,7 @@ exports.EXECUTION_REQUESTS_DEFINITIONS = {
                 full_page: false
             },
             source_page: true,
-            extract_rules: true
+            extract_rules: []
         },
         request_config: {
             block_resources: ["string"],

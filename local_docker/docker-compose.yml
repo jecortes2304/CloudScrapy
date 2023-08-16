@@ -1,0 +1,48 @@
+version: '3'
+name: cloud-scrapy
+services:
+  mongo_db:
+    container_name: cs_mongo
+    restart: unless-stopped
+    image: mongo:5.0.6
+    network_mode: bridge
+    ports:
+      - '27017:27017'
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=rootcloudscrapy
+      - MONGO_INITDB_ROOT_PASSWORD=root.1234*
+    volumes:
+      - mongodb_data:/data
+  dragonfly_db:
+    container_name: cs_dragonfly
+    network_mode: bridge
+    restart: unless-stopped
+    image: 'docker.dragonflydb.io/dragonflydb/dragonfly'
+    ulimits:
+      memlock: -1
+    ports:
+      - "6379:6379"
+    volumes:
+      - dragonflydata:/data
+  app:
+    container_name: cs_app
+    restart: unless-stopped
+    network_mode: bridge
+    ports:
+      - '5000:5000'
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    entrypoint:
+      - local_docker/entrypoint.sh
+    environment:
+      NODE_ENV: dev
+    depends_on:
+      - mongo_db
+      - dragonfly_db
+    links:
+      - mongo_db
+      - dragonfly_db
+volumes:
+  dragonflydata:
+  mongodb_data:

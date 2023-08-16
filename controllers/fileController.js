@@ -22,7 +22,8 @@ function FileController() {
                 });
             } else {
                 res.writeHead(200, {'Content-Type': 'image/jpg'});
-                return res.status(200).send(data);
+                res.write(data)
+                return res.end(data)
             }
         });
     }
@@ -37,8 +38,9 @@ function FileController() {
                     message: "File not found"
                 });
             } else {
-                res.writeHead(200, {'Content-Type': 'text/plain'});
-                return res.status(200).send(data);
+                res.writeHead(200, {'Content-Type': 'application/pdf'});
+                res.write(data)
+                return res.end(data)
             }
         });
     }
@@ -54,7 +56,8 @@ function FileController() {
                 });
             } else {
                 res.writeHead(200, {'Content-Type': 'text/plain'});
-                return res.status(200).send(data);
+                res.write(data)
+                return res.end(data)
             }
         });
     }
@@ -84,7 +87,7 @@ function FileController() {
                 hostname: os.hostname(),
                 code: LOGIN_REGISTER_ERRORS.INTERNAL_SERVER_ERROR.code,
                 message: LOGIN_REGISTER_ERRORS.INTERNAL_SERVER_ERROR.message,
-                error:{error: JSON.stringify(error)}
+                error: {error: JSON.stringify(error)}
             })
         }
     }
@@ -114,7 +117,7 @@ function FileController() {
                 hostname: os.hostname(),
                 code: LOGIN_REGISTER_ERRORS.INTERNAL_SERVER_ERROR.code,
                 message: LOGIN_REGISTER_ERRORS.INTERNAL_SERVER_ERROR.message,
-                error:{error: JSON.stringify(error)}
+                error: {error: JSON.stringify(error)}
             })
         }
     }
@@ -144,7 +147,7 @@ function FileController() {
                 hostname: os.hostname(),
                 code: LOGIN_REGISTER_ERRORS.INTERNAL_SERVER_ERROR.code,
                 message: LOGIN_REGISTER_ERRORS.INTERNAL_SERVER_ERROR.message,
-                error:{error: JSON.stringify(error)}
+                error: {error: JSON.stringify(error)}
             })
         }
     }

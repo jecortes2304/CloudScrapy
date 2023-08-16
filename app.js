@@ -40,9 +40,15 @@ app.use(bp.json())
 //SETTING ROUTERS AND ENDPOINTS
 app.use('/api/v1', v1)
 app.get('/', async function (req, res) {
-    /* #swagger.ignore = true*/await res.redirect('/api-docs')
+    /* #swagger.ignore = true*/
+    await res.redirect('/api-docs')
 });
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile, apiDocsOptionsUI))
+app.get('/openapi.json', async function (req, res) {
+    /* #swagger.ignore = true*/
+    res.setHeader('Content-Type', 'application/json');
+    await res.send(swaggerFile);
+});
 app.use('/public', express.static('public'))
 
 ScheduleProcess().start()

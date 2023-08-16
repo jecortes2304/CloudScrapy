@@ -5,18 +5,18 @@
     "version": "1.0.0",
     "description": "API to interact with headless browser engine bot on the cloud to scrape data",
     "license": {
-      "name": "MIT",
-      "url": "https://spdx.org/licenses/MIT.html"
+      "name": "ISC",
+      "url": "https://opensource.org/licenses/ISC"
     },
     "contact": {
       "name": "Lucual18",
       "url": "https://www.lucual18.com",
-      "email": "layusoelu@lucual18.es"
+      "email": "joseernesto@lucual18.es"
     }
   },
   "servers": [
     {
-      "url": "http://127.0.0.1:3000",
+      "url": "http://127.0.0.1:5000",
       "description": "DEV SERVER"
     }
   ],
@@ -27,7 +27,6 @@
           "Auth"
         ],
         "description": "Endpoint to sign up",
-        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -40,6 +39,21 @@
               "application/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/RegisterOk"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
                 }
               }
             }
@@ -70,6 +84,21 @@
               "application/xml": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorForbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
                 }
               }
             }
@@ -118,7 +147,6 @@
           "Auth"
         ],
         "description": "Endpoint to sign in and get token",
-        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -136,7 +164,19 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized",
@@ -154,7 +194,19 @@
             }
           },
           "404": {
-            "description": "Not Found"
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorNotFound"
+                }
+              }
+            }
           },
           "500": {
             "description": "Internal Server Error",
@@ -369,7 +421,6 @@
           "Users"
         ],
         "description": "Endpoint to get the logged user profile info",
-        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -531,7 +582,6 @@
           "Users"
         ],
         "description": "Endpoint to get all users",
-        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -736,7 +786,19 @@
             }
           },
           "400": {
-            "description": "Bad Request"
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorBadRequest"
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized",
@@ -827,7 +889,6 @@
           "Executions"
         ],
         "description": "Execute a set of instructions in a new browserContext of the user",
-        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -933,7 +994,6 @@
           "Executions"
         ],
         "description": "Execute a set of instructions to solve action require in a browserContext by browserContext id",
-        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -1140,7 +1200,6 @@
           "Executions"
         ],
         "description": "Get all active browser contexts",
-        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -1301,7 +1360,6 @@
           "Utils"
         ],
         "description": "Convert html to pdf by sending a text html",
-        "parameters": [],
         "responses": {
           "200": {
             "description": "OK",
@@ -1420,10 +1478,10 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
             "content": [
               "application/jpg"
-            ]
+            ],
+            "description": "OK"
           },
           "404": {
             "description": "Not Found",
@@ -1462,10 +1520,10 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
             "content": [
               "text/plain"
-            ]
+            ],
+            "description": "OK"
           },
           "404": {
             "description": "Not Found",
@@ -1504,10 +1562,10 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
             "content": [
               "text/plain"
-            ]
+            ],
+            "description": "OK"
           },
           "404": {
             "description": "Not Found",
@@ -1905,7 +1963,7 @@
               },
               "message": {
                 "type": "string",
-                "example": "The token is invalid"
+                "example": "string"
               }
             }
           }
@@ -2037,8 +2095,9 @@
                 "example": true
               },
               "extract_rules": {
-                "type": "boolean",
-                "example": true
+                "type": "array",
+                "example": [],
+                "items": {}
               }
             }
           },
@@ -2789,6 +2848,10 @@
         "description": "Cloud Scrapy key to authenticate"
       }
     }
+  },
+  "externalDocs": {
+    "description": "openapi.json",
+    "url": "/openapi.json"
   },
   "apis": [
     "./routes/*.js"

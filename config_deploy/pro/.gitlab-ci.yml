@@ -6,7 +6,7 @@ variables:
   NODE_ENV: "pro"
   NAME_SERVICE_TRAEFIK: "cloud-scrapy"
 
-
+#docker run --network=host --ulimit memlock=-1 docker.dragonflydb.io/dragonflydb/dragonfly
 stages:
   - BUILD_PRO
   - SIV2CPOM01
@@ -22,10 +22,10 @@ stages:
 
 BUILD_PRO: # Acronimo: Build produccion
   tags:
-    - invoicy-main-runner-shell
+    - ovh-infonite-worker-01
   stage: BUILD_PRO
   script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker build -t $IMAGE_APP:$IMAGE_TAG .
     - docker push $IMAGE_APP:$IMAGE_TAG
     - docker image rm -f $IMAGE_APP:$IMAGE_TAG
@@ -36,7 +36,7 @@ SIV2CPOM01:
     - invoicy-v2-clouding-pro-manager-01
   stage: SIV2CPOM01
   script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker stack rm $NAME_STACK
     - sleep 20
   needs: [BUILD_PRO]
@@ -51,8 +51,8 @@ UIV2CPOW01:
     - invoicy-v2-clouding-pro-worker-01
   stage: UIV2CPOW01
   script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-    - docker rmi $(docker images | grep "$IMAGE_APP" | awk '{print $3}')
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    #- docker rmi $(docker images | grep "$IMAGE_APP" | awk '{print $3}')
     - docker pull $IMAGE_APP:$IMAGE_TAG
   needs: [SIV2CPOM01]
 
@@ -65,8 +65,8 @@ UIV2CPOW02:
     - invoicy-v2-clouding-pro-worker-02
   stage: UIV2CPOW02
   script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-    - docker rmi $(docker images | grep "$IMAGE_APP" | awk '{print $3}')
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+    #- docker rmi $(docker images | grep "$IMAGE_APP" | awk '{print $3}')
     - docker pull $IMAGE_APP:$IMAGE_TAG
   needs: [SIV2CPOM01]
 
@@ -81,6 +81,6 @@ DIV2CPOM01:
     - invoicy-v2-clouding-pro-manager-01
   stage: DIV2CPOM01
   script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker stack deploy --compose-file docker-compose.yml $NAME_STACK
   needs: ["UIV2CPOW01","UIV2CPOW02"]

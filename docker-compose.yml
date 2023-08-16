@@ -11,7 +11,9 @@ services:
       volumes:
         - screenshots_scrapy:/files/screenshots
         - logs_scrapy:/files/logs/
-        - pdfs_scrapy:/files/pdfs/ 
+        - pdfs_scrapy:/files/pdfs/
+      entrypoint:
+        - /app/entrypoint.sh
       environment:
          - NODE_ENV=${NODE_ENV}
       deploy:
@@ -25,7 +27,7 @@ services:
         placement:
           constraints:
             - "node.role == worker"
-            - 'node.hostname!=invoicy-v2-clouding-pre-worker-03'
+
          
 volumes:
   screenshots_scrapy:

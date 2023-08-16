@@ -2,25 +2,27 @@ title = "Config Local"
 
 [DEFAULT]
     organization_domain = 'invoicy.es'
-    cloud_scrapy_server = 'http://127.0.0.1:3000'
+    cloud_scrapy_server = 'http://127.0.0.1:5000'
 [limits]
     browsers_contexts_allowed = 50
     time_seconds_expires = 86400
 [server]
-    server_url = 'http://127.0.0.1:3000'
+    server_url = 'http://127.0.0.1:5000'
     server_host = '127.0.0.1'
-    server_port = 3000
+    server_port = 5000
     server_name = 'cloud-scrapy-dev'
     server_environment = 'DEV'
 [mongodb]
-    host = '127.0.0.1'
+    host = 'cs_mongo'
     port = 27017
     username = 'rootcloudscrapy'
     password = 'root.1234*'
     database = 'cloud_scrapy'
-    mongodb_uri = 'mongodb://rootcloudscrapy:root.1234*@localhost:27017/cloud_scrapy?authSource=admin'
+    mongodb_uri = 'mongodb://rootcloudscrapy:root.1234*@127.0.0.1:27017/cloud_scrapy?authSource=admin'
+#    mongodb_uri = 'mongodb://rootcloudscrapy:root.1234*@cs_mongo:27017/cloud_scrapy?authSource=admin'
 [redis]
     host = '127.0.0.1'
+#    host = 'cs_dragonfly'
     port = 6379
     username = ''
     password = ''

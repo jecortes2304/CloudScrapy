@@ -18,23 +18,27 @@ const apiConfig = {
             description:
                 "API to interact with headless browser engine bot on the cloud to scrape data",
             license: {
-                name: "MIT",
-                url: "https://spdx.org/licenses/MIT.html",
+                name: "ISC",
+                url: "https://opensource.org/licenses/ISC",
             },
             contact: {
                 name: "Lucual18",
                 url: "https://www.lucual18.com",
-                email: "layusoelu@lucual18.es",
+                email: "joseernesto@lucual18.es",
             },
         },
         servers: [
             {
-                url: server_url,
+                url: `${server_url}`,
                 description: `${server_environment} SERVER`
             }
         ],
         consumes: ['application/json'],
         produces: ['application/json'],
+        externalDocs: {
+            description: "openapi.json",
+            url: "/openapi.json"
+        },
         securityDefinitions: {
             apiKeyAuth: {
                 type: "apiKey",
@@ -89,7 +93,7 @@ const apiConfig = {
         autoBody: true
     },
     apiDocsOptionsUI: {
-        customCss: '.swagger-ui .topbar { display: none }',
+        // customCss: '.swagger-ui .topbar-wrapper img { content:url(\'/public/images/cloud_scrapy.ico\');}',
         customSiteTitle: "Cloud Scrapy Api Docs",
         customfavIcon: "/public/images/cloud_scrapy.ico"
     },

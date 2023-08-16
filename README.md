@@ -24,7 +24,7 @@
 >Download mongodb [here](https://www.mongodb.com/try/download/community-kubernetes-operator) and install it.
 
 ```sh
-  docker run -d --name YOUR_CONTAINER_NAME -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=YOUR_USERNAME -e MONGO_INITDB_ROOT_PASSWORD=YOUR_PASSWORD -v C:/mongodb/cloud_scrapy/mongo:/data/db mongo:5.0.6```
+  docker run -d --name YOUR_CONTAINER_NAME -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=YOUR_USERNAME -e MONGO_INITDB_ROOT_PASSWORD=YOUR_PASSWORD -v C:/mongodb/cloud_scrapy/mongo:/data/db mongo:5.0.6
 ```
 
 #### DragonFlyDB (Replace for redis)
@@ -35,15 +35,18 @@ docker run -d --name YOUR_CONTAINER_NAME -p 6379:6379 --ulimit memlock=-1 -v C:/
 ```
 
 
+### You can go and run the docker-compose.yml from local_docker to init everything instead
+
+##
 #### Configuring environment 
-Only need to set variable NODE_ENV in (dev, pre, pre) all the names of the config files
+Only need to set variable NODE_ENV in (dev, pre, pro) all the names of the config files
 in the ./config directory
 ~~~
 NODE_ENV=dev
 
 NODE_ENV=pre
 
-NODE_ENV=pre
+NODE_ENV=pro
 
 NODE_ENV=YOUR_FILE_NAME
 ~~~
@@ -79,9 +82,20 @@ npm run tests
 npm run swagger
 ```
 
-
 ## How to use it
-A full request execution json is divided by 4 jsons:
+A full execution json is divided by 4 jsons:
+
+* execution
+~~~
+{
+    "request_description": YOUR_DESCRIPTION,
+    "send_in_request": {SEE_BELLOW},
+    "get_in_response": {SEE_BELLOW},
+    "request_config": {SEE_BELLOW}
+}
+
+~~~
+
 * request_description (An small description of the request for easy understand later) Example:
 ~~~
 "request_description": YOUR_DESCRIPTION
@@ -90,45 +104,45 @@ A full request execution json is divided by 4 jsons:
 * [See documentation for every instruction below](https://pptr.dev/)
 ~~~
 "send_in_request": {
-    "url": "YOUR_URL", "options": {},
+    "url": "YOUR_URL", "options": {"READ_DOCS"},
     "instructions": [
-        {command: "goto", params: ["YOUR_URL"], options: {}},
-        {command: "click", params: ["SELECTOR"], options: {}},
-        {command: "click_and_wait", params: ["SELECTOR"], options: {}},
-        {command: "wait_for_selector", params: ["SELECTOR"], options: {}},
-        {command: "wait_for_selector_and_click", params: ["SELECTOR"], options: {}},
-        {command: "wait_selector_click_wait_nav", params: ["SELECTOR"], options: {}},
-        {command: "wait_for_xpath", params: ["XPATH"], options: {}},
-        {command: "wait_for_function", params: ["JAVASCRIPT_FUNCTION"], options: {}},
-        {command: "wait_for_navigation", params: [], options: {}},
-        {command: "evaluate", params: ["JAVASCRIPT_CODE"], options: {}},
-        {command: "verify", params: ["TEXT"], options: {}}, //Verify if a text exist in the current page and return true or false that leads to action required or not
-        {command: "xpath", params: ["XPATH"], options: {}},
-        {command: "type", params: ["SELECTOR", "TEXT"], options: {}},
-        {command: "sec_type", params: ["SELECTOR", "ENCRYPTED_TEXT"], options: {}},
-        {command: "keyboard_press", params: ["KEY_INPUT"], options: {}},
-        {command: "keyboard_down", params: ["KEY_INPUT"], options: {}},
-        {command: "keyboard_up", params: ["KEY_INPUT"], options: {}}
+        {"command": "goto", "params": ["YOUR_URL"], "options": {"READ_DOCS"}},
+        {"command": "click", "params": ["SELECTOR"], "options": {"READ_DOCS"}},
+        {"command": "click_and_wait", "params": ["SELECTOR"], "options": {"READ_DOCS"}},
+        {"command": "wait_for_selector", "params": ["SELECTOR"], "options": {"READ_DOCS"}},
+        {"command": "wait_for_selector_and_click", "params": ["SELECTOR"], "options": {"READ_DOCS"}},
+        {"command": "wait_selector_click_wait_nav", "params": ["SELECTOR"], "options": {"READ_DOCS"}},
+        {"command": "wait_for_xpath", "params": ["XPATH"], "options": {"READ_DOCS"}},
+        {"command": "wait_for_function", "params": ["JAVASCRIPT_FUNCTION"], "options": {"READ_DOCS"}},
+        {"command": "wait_for_navigation", "params": [], "options": {"READ_DOCS"}},
+        {"command": "evaluate", "params": ["JAVASCRIPT_CODE"], "options": {"READ_DOCS"}},
+        {"command": "verify", "params": ["TEXT"], "options": {"READ_DOCS"}}, //Verify if a text exist in the current page and return true or false that leads to action required or not
+        {"command": "xpath", "params": ["XPATH"], "options": {"READ_DOCS"}},
+        {"command": "type", "params": ["SELECTOR", "TEXT"], "options": {"READ_DOCS"}},
+        {"command": "sec_type", "params": ["SELECTOR", "ENCRYPTED_TEXT"], "options": {"READ_DOCS"}},
+        {"command": "keyboard_press", "params": ["KEY_INPUT"], "options": {"READ_DOCS"}},
+        {"command": "keyboard_down", "params": ["KEY_INPUT"], "options": {"READ_DOCS"}},
+        {"command": "keyboard_up", "params": ["KEY_INPUT"], "options": {"READ_DOCS"}}
     ]
 }
 ~~~
 * get_in_response (It is what you need the server to send you once the execution is finished) Example:
 ~~~ 
 "get_in_response": {
-    cookies: true,
-    headers: true,
-    html_to_pdf: true,
-    logs: {
-        active: true,
-        full_logs: false
+    "cookies": true,
+    "headers": true,
+    "html_to_pdf": true,
+    "logs": {
+        "active": true,
+        "full_logs": false
     },
-    screenshot: {
-        active: true,
-        full_page: false
+    "screenshot": {
+        "active": true,
+        "full_page": false
     },
-    source_page: true,
-    extract_rules: [
-        {"name": YOUR_RULE_NAME, "selector": SELECTOR, "attribute": "THE_ATTR_YOU_WANT")
+    "source_page": true,
+    "extract_rules": [
+        {"name": "YOUR_RULE_NAME", "selector": "SELECTOR", "attribute": "THE_ATTR_YOU_WANT")
     ]
 }
 ~~~
@@ -139,14 +153,14 @@ document, stylesheet, image, media, font, script, texttrack,
 xhr, fetch, eventsource, websocket, manifest, other
 ~~~
 "request_config": {
-    block_resources: [RESOURCES],
-    headers: "YOUR_HEADERS",
-    cookies: "YOUR_COOKIES",
-    captcha: true,
-    geolocation: {latitude: "LATITUDE", longitude: "LONGITUDE"},
-    user_agent: "YOUR_USER_AGENT/OR_CLOUDSCRAPY ASSIGNS RANDOM ONE",
-    view_port: {width: "WIDTH", height: "HEIGHT"},
-    custom_proxy: "YOUR_URI_CUSTOM_PROXY"
+    "block_resources": ["RESOURCES"],
+    "headers": "YOUR_HEADERS",
+    "cookies": "YOUR_COOKIES",
+    "captcha": true,
+    "geolocation": {"latitude": "LATITUDE", "longitude": "LONGITUDE"},
+    "user_agent": "YOUR_USER_AGENT/OR_CLOUDSCRAPY ASSIGNS RANDOM ONE",
+    "view_port": {"width": "WIDTH", "height": "HEIGHT"},
+    "custom_proxy": "YOUR_URI_CUSTOM_PROXY"
 }
 ~~~
 
@@ -155,10 +169,10 @@ an execution need to solve some action after verify that something planed happen
 
 ~~~
 {
-    context_id: "YOUR_CONTEXT_ID_FROM_PREVIOUS_EXECUTION",
-    request_id: "YOUR_REQUEST_ID_FROM_PREVIOUS_EXECUTION",
-    request_description: "YOUR_DESCRIPTION",
-    send_in_request: {THE SAME THAT EXECUTION}
+    "context_id": "YOUR_CONTEXT_ID_FROM_PREVIOUS_EXECUTION",
+    "request_id": "YOUR_REQUEST_ID_FROM_PREVIOUS_EXECUTION",
+    "request_description": "YOUR_DESCRIPTION",
+    "send_in_request": {THE SAME THAT EXECUTION}
 }
 ~~~
 

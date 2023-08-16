@@ -5,5 +5,6 @@ const outputFile = './config/docs/openapi.json'
 const endpointRoutes = ['./app.js']
 
 swaggerAutogen(outputFile, endpointRoutes , apiDocsConfig).then(() => {
-    require('../../app')
+    // require('../../app')
+    console.log("DOCS UPDATED")
 })

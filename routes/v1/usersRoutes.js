@@ -212,6 +212,9 @@ router.put('/update-user/:userId', [isRoot, verifyToken], async (req, res) => {
         #swagger.responses[401] = {
             schema:{ $ref: "#/definitions/ErrorLogin" }
         }
+        #swagger.responses[400] = {
+            schema:{ $ref: "#/definitions/ErrorBadRequest" }
+        }
         #swagger.responses[200] = {
             schema:{ $ref: "#/definitions/UpdateUserResponse" }
         }

@@ -22,10 +22,10 @@ stages:
 
 BUILD_PRE: # Acronimo: Build Pre produccion
   tags:
-    - invoicy-main-runner-shell
+    - ovh-infonite-worker-01
   stage: BUILD_PRE
   script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker build -t $IMAGE_APP:$IMAGE_TAG .
     - docker push $IMAGE_APP:$IMAGE_TAG
     - docker image rm -f $IMAGE_APP:$IMAGE_TAG
@@ -36,7 +36,7 @@ SIV2CPEM01:
     - invoicy-v2-clouding-pre-manager-01
   stage: SIV2CPEM01
   script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker stack rm $NAME_STACK
     - sleep 20
   needs: [BUILD_PRE]
@@ -50,7 +50,7 @@ UIV2CPEW01:
     - invoicy-v2-clouding-pre-worker-01
   stage: UIV2CPEW01
   script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     #- docker rmi $(docker images | grep "$IMAGE_APP" | awk '{print $3}')
     - docker pull $IMAGE_APP:$IMAGE_TAG
   needs: [SIV2CPEM01]
@@ -64,7 +64,7 @@ UIV2CPEW02:
     - invoicy-v2-clouding-pre-worker-02
   stage: UIV2CPEW02
   script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     #- docker rmi $(docker images | grep "$IMAGE_APP" | awk '{print $3}')
     - docker pull $IMAGE_APP:$IMAGE_TAG
   needs: [SIV2CPEM01]
@@ -80,6 +80,6 @@ DIV2CPEM01:
     - invoicy-v2-clouding-pre-manager-01
   stage: DIV2CPEM01
   script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
     - docker stack deploy --compose-file docker-compose.yml $NAME_STACK
   needs: ["UIV2CPEW01","UIV2CPEW02"]
