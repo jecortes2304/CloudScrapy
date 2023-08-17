@@ -343,7 +343,7 @@ function ExecutionController() {
         }),
         request_config: Joi.object({
             headers: Joi.alternatives().try(Joi.object(), Joi.array()),
-            cookies: Joi.alternatives().try(Joi.object(), Joi.array()),
+            cookies: Joi.string(),
             block_resources: Joi.array().items((Joi.string())),
             captcha: Joi.boolean(),
             geolocation: Joi.object({
